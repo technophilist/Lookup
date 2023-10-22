@@ -66,8 +66,11 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
-    // Image loading/caching
+    // image loading/caching
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // lottie
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
 
     // CameraX
     implementation("androidx.camera:camera-core:1.3.0")
