@@ -3,6 +3,7 @@ package com.example.lookup.ui.home
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.CameraController
@@ -61,6 +62,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.lookup.ui.components.CameraPreview
 import com.example.lookup.R
+import com.example.lookup.ui.activities.test
 import com.example.lookup.ui.utils.BookmarkAdd
 import com.example.lookup.ui.utils.BookmarkAdded
 import com.example.lookup.ui.utils.Bookmarks
@@ -91,6 +93,22 @@ data class IdentifiedLocation(
     data class InfoCardContent(
         val title: String,
         val content: String
+    )
+}
+
+@Composable
+fun HomeScreen(
+    homeScreenUiState: HomeScreenUiState,
+    navigateToBookmarkedLocations: () -> Unit,
+    onBookmarkIconClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    HomeScreen(
+        modifier = modifier,
+        identifiedLocation = homeScreenUiState.identifiedLocation,
+        isAnalyzing = false,
+        navigateToBookmarkedLocations = navigateToBookmarkedLocations,
+        onBookmarkIconClick = onBookmarkIconClick
     )
 }
 
