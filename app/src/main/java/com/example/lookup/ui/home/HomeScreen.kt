@@ -62,7 +62,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.lookup.ui.components.CameraPreview
 import com.example.lookup.R
-import com.example.lookup.ui.activities.test
 import com.example.lookup.ui.utils.BookmarkAdd
 import com.example.lookup.ui.utils.BookmarkAdded
 import com.example.lookup.ui.utils.Bookmarks
@@ -245,7 +244,7 @@ private fun BottomSheetHeader(
     modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
-        val icon = if (isBookmarked) Icons.Outlined.BookmarkAdded else Icons.Outlined.BookmarkAdd
+        val icon = if (isBookmarked) Icons.Rounded.BookmarkAdded else Icons.Rounded.BookmarkAdd
         Text(
             text = locationName,
             maxLines = 1,
@@ -289,7 +288,7 @@ private fun TopBarActionsRow(
     Row(modifier = modifier) {
         IconButton(
             onClick = onBookmarksButtonClick,
-            content = { Icon(imageVector = Icons.Outlined.Bookmarks, contentDescription = null) }
+            content = { Icon(imageVector = Icons.Rounded.Bookmarks, contentDescription = null) }
         )
     }
 }
