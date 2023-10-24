@@ -69,6 +69,7 @@ val DarkColorScheme = darkColorScheme(
     inversePrimary = md_theme_dark_inversePrimary,
     surfaceTint = md_theme_dark_surfaceTint,
 )
+
 @Composable
 fun LookupTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -86,7 +87,7 @@ fun LookupTheme(
     }
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = LookupTypography,
         content = content
     )
 }
