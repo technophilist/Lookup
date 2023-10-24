@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -149,13 +150,17 @@ fun HomeScreen(
         } else {
             DefaultBackground(modifier = Modifier.fillMaxSize())
         }
-        // TODO : Use custom font for title
         TopAppBar(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .fillMaxWidth(),
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
-            title = { Text(text = stringResource(id = R.string.app_name)) },
+            title = {
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    fontWeight = FontWeight.Bold
+                )
+            },
             actions = { TopBarActionsRow(onBookmarksButtonClick = navigateToBookmarkedLocations) }
         )
         if (isAnalyzing) {
