@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,10 +25,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -296,10 +299,17 @@ private fun TopBarActionsRow(
     modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier) {
-        IconButton(
-            onClick = onBookmarksButtonClick,
-            content = { Icon(imageVector = Icons.Rounded.Bookmarks, contentDescription = null) }
-        )
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.secondaryContainer)
+        ) {
+            OutlinedIconButton(
+                modifier = Modifier.align(Alignment.Center),
+                onClick = onBookmarksButtonClick,
+                content = { Icon(imageVector = Icons.Rounded.Bookmarks, contentDescription = null) }
+            )
+        }
     }
 }
 
