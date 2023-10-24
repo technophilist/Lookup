@@ -248,9 +248,14 @@ private fun BottomSheetHeader(
     onBookmarkIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         val icon = if (isBookmarked) Icons.Rounded.BookmarkAdded else Icons.Rounded.BookmarkAdd
         Text(
+            modifier = Modifier.weight(1f),
             text = locationName,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
