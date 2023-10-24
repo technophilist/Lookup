@@ -252,7 +252,7 @@ private fun BottomSheetHeader(
         val icon = if (isBookmarked) Icons.Rounded.BookmarkAdded else Icons.Rounded.BookmarkAdd
         Text(
             text = locationName,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.displaySmall
         )
