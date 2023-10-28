@@ -1,4 +1,4 @@
-package com.example.lookup.data.classifiers
+package com.example.lookup.data.local.classifiers
 
 import android.graphics.Bitmap
 

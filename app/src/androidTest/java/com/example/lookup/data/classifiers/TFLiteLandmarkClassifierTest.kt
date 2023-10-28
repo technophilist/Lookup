@@ -6,6 +6,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import com.example.lookup.data.local.classifiers.LandmarksClassifier
+import com.example.lookup.data.local.classifiers.TFLiteLandmarkClassifier
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
