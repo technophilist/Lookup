@@ -101,4 +101,8 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+
+    // junit
+    testImplementation("junit:junit:4.13.2")
+
 }
