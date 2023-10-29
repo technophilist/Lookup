@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,6 +21,17 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        // load the api key from local properties file and make it
+        // available as a build config field
+        val properties = Properties().apply {
+            load(project.rootProject.file("local.properties").inputStream())
+        }
+        val openAiApiToken = properties.getProperty("OPEN_AI_API_TOKEN")
+        buildConfigField(
+            type = "String",
+            name = "OPEN_AI_API_TOKEN",
+            value = "\"$openAiApiToken\""
+        )
     }
 
     buildTypes {
@@ -31,14 +44,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
