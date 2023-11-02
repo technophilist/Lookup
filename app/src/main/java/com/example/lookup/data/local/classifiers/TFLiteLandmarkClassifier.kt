@@ -18,14 +18,11 @@ import org.tensorflow.lite.task.vision.classifier.ImageClassifier
  * A TensorFlow Lite [LandmarksClassifier].
  *
  * @param context an instance of [Context] to be used for initialization.
- * @param classificationInclusionThreshold The minimum score that a classification must have
- * to be included in the results.
- * @param maxResults The maximum number of results to return.
+ * @param classifierConfiguration The configuration parameters for the classifier.
  */
 class TFLiteLandmarkClassifier(
     private val context: Context,
-    private val classificationInclusionThreshold: Float = 0.5f,
-    private val maxResults: Int = 1,
+    private val classifierConfiguration: LandmarksClassifier.ClassifierConfiguration,
     private val ioDispatcher: CoroutineDispatcher,
 ) : LandmarksClassifier {
 
@@ -42,8 +39,8 @@ class TFLiteLandmarkClassifier(
             .build()
         val classifierOptions = ImageClassifier.ImageClassifierOptions.builder()
             .setBaseOptions(baseOptions)
-            .setMaxResults(maxResults)
-            .setScoreThreshold(classificationInclusionThreshold)
+            .setMaxResults(classifierConfiguration.maxResults)
+            .setScoreThreshold(classifierConfiguration.classificationInclusionThreshold)
             .build()
 
         return ImageClassifier.createFromFileAndOptions(
