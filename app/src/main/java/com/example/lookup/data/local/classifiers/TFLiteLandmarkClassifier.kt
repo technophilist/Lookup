@@ -3,6 +3,8 @@ package com.example.lookup.data.local.classifiers
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.camera.core.ImageAnalysis
+import com.example.lookup.di.IODispatcher
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -13,6 +15,7 @@ import org.tensorflow.lite.support.label.Category
 import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.core.vision.ImageProcessingOptions
 import org.tensorflow.lite.task.vision.classifier.ImageClassifier
+import javax.inject.Inject
 
 /**
  * A TensorFlow Lite [LandmarksClassifier].
@@ -20,10 +23,10 @@ import org.tensorflow.lite.task.vision.classifier.ImageClassifier
  * @param context an instance of [Context] to be used for initialization.
  * @param classifierConfiguration The configuration parameters for the classifier.
  */
-class TFLiteLandmarkClassifier(
-    private val context: Context,
+class TFLiteLandmarkClassifier @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val classifierConfiguration: LandmarksClassifier.ClassifierConfiguration,
-    private val ioDispatcher: CoroutineDispatcher,
+    @IODispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : LandmarksClassifier {
 
     private var classifier: ImageClassifier? = null
