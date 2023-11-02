@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.lookup.ui.LookupApp
 import com.example.lookup.ui.theme.LookupTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,11 +25,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             // TODO : enable dynamic colors
             LookupTheme(enableDynamicColors = false) {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
-                    content = { Text("Android") }
+                    content = { LookupApp() }
                 )
             }
         }
