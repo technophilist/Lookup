@@ -10,6 +10,9 @@ import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +42,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -69,6 +74,7 @@ import com.example.lookup.R
 import com.example.lookup.ui.utils.BookmarkAdd
 import com.example.lookup.ui.utils.BookmarkAdded
 import com.example.lookup.ui.utils.Bookmarks
+import kotlinx.coroutines.delay
 
 /**
  * A data class representing an identified location.
@@ -77,12 +83,15 @@ import com.example.lookup.ui.utils.Bookmarks
  * @property imageUrls A list of URLs to images of the location.
  * @property infoCardsContentList A list of [InfoCardContent] objects containing supplementary
  * information about the location.
+ * @property moreInfoSuggestions A list of suggestions used to give an option to the user to request
+ * more info about a particular location.
  * @property isBookmarked A boolean indicating whether the location has been bookmarked.
  */
 data class IdentifiedLocation(
     val name: String,
     val imageUrls: List<String>,
     val infoCardsContentList: List<InfoCardContent>,
+    val moreInfoSuggestions: List<MoreInfoSuggestion>,
     val isBookmarked: Boolean
 ) {
 
@@ -97,6 +106,13 @@ data class IdentifiedLocation(
         val title: String,
         val content: String
     )
+
+    /**
+     * A data class representing a suggestion. A suggestion is used to give an option to the user
+     * to request more info about a particular [IdentifiedLocation].
+     */
+    @JvmInline
+    value class MoreInfoSuggestion(val suggestion: String)
 }
 
 @Composable
@@ -104,6 +120,7 @@ fun HomeScreen(
     homeScreenUiState: HomeScreenUiState,
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
+    onSuggestionClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HomeScreen(
@@ -111,7 +128,8 @@ fun HomeScreen(
         identifiedLocation = homeScreenUiState.identifiedLocation,
         isAnalyzing = false,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
-        onBookmarkIconClick = onBookmarkIconClick
+        onBookmarkIconClick = onBookmarkIconClick,
+        onSuggestionClick = onSuggestionClick
     )
 }
 
@@ -122,6 +140,7 @@ fun HomeScreen(
     isAnalyzing: Boolean,
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
+    onSuggestionClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -184,7 +203,8 @@ fun HomeScreen(
                 identifiedLocation?.let {
                     BottomSheetContent(
                         identifiedLocation = it,
-                        onBookmarkIconClick = onBookmarkIconClick
+                        onBookmarkIconClick = onBookmarkIconClick,
+                        onSuggestionClick = onSuggestionClick
                     )
                 }
             }
@@ -195,6 +215,7 @@ fun HomeScreen(
 @Composable
 private fun BottomSheetContent(
     identifiedLocation: IdentifiedLocation,
+    onSuggestionClick: (index: Int) -> Unit,
     onBookmarkIconClick: () -> Unit,
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState()
@@ -228,14 +249,32 @@ private fun BottomSheetContent(
             }
         }
         // Not using lazy list because very few items are expected to be in the list
-        identifiedLocation.infoCardsContentList.forEach {
-            IdentifiedLocationInfoCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                identifiedLocation = it
-            )
+
+        IdentifiedLocationInfoCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            identifiedLocation = identifiedLocation.infoCardsContentList.first()
+        )
+
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            itemsIndexed(identifiedLocation.moreInfoSuggestions) { index, moreInfoSuggestion ->
+                SuggestionChip(
+                    onClick = { onSuggestionClick(index) },
+                    label = {
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = moreInfoSuggestion.suggestion
+                        )
+                    }
+                )
+            }
         }
+
         Spacer(
             modifier = Modifier
                 .navigationBarsPadding()
