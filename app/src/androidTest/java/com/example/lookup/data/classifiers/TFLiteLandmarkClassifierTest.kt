@@ -17,7 +17,8 @@ class TFLiteLandmarkClassifierTest {
     private val testDispatcher = StandardTestDispatcher()
     private val classifier = TFLiteLandmarkClassifier(
         context = context,
-        ioDispatcher = testDispatcher
+        ioDispatcher = testDispatcher,
+        classifierConfiguration = LandmarksClassifier.ClassifierConfiguration()
     )
 
     @Test
