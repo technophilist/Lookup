@@ -22,3 +22,8 @@ data class GeneratedTextResponse(
     @JsonClass(generateAdapter = true)
     data class GeneratedResponse(val message: MessageDTO)
 }
+
+/**
+ * Convenience extension property. Short hand for "generatedTextResponse.generatedResponses.first.message.content"
+ */
+val GeneratedTextResponse.firstResponse get() = generatedResponses.first().message.content
