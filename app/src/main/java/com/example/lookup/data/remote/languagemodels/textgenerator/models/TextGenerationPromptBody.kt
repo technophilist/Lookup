@@ -1,8 +1,8 @@
 package com.example.lookup.data.remote.languagemodels.textgenerator.models
 
+import androidx.compose.material3.Text
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import com.example.lookup.data.remote.languagemodels.textgenerator.TextGeneratorClientConstants
 
 /**
  * A class that contains the prompt messages and it's associated meta-data that a large language
@@ -31,3 +31,27 @@ data class TextGenerationPromptBody(
     }
 
 }
+
+/**
+ * A convenience builder function used to build an instance of [TextGenerationPromptBody]
+ * with the provided [systemPrompt] and [userPrompt].
+ */
+fun buildTextGenerationPromptBody(
+    systemPrompt: String,
+    userPrompt: String,
+    maxResponseTokens: Int = 150,
+    model: String = TextGenerationPromptBody.Models.GPT_3_5_TURBO
+) = TextGenerationPromptBody(
+    messages = listOf(
+        MessageDTO(
+            role = MessageDTO.Roles.SYSTEM,
+            content = systemPrompt
+        ),
+        MessageDTO(
+            role = MessageDTO.Roles.USER,
+            content = userPrompt
+        )
+    ),
+    model = model,
+    maxResponseTokens = maxResponseTokens
+)
