@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
  * Note : Since the [TextGeneratorClient] interacts with an LLM (which is inherently slow at the
  * time of writing this application) over a network (which is relatively slow), the default
  * connect and read timeout is not sufficient, and causes an [SocketTimeoutException]. Hence,
- * the default connect timeout has to be changed.
+ * the default connect timeout and read timeout has to be changed.
  */
 private val lookupAppTextGeneratorClientOkHttpClient by lazy {
     OkHttpClient.Builder()
@@ -30,6 +30,7 @@ private val lookupAppTextGeneratorClientOkHttpClient by lazy {
             chain.proceed(newRequest)
         }
         .connectTimeout(1, TimeUnit.MINUTES)
+        .readTimeout(1, TimeUnit.MINUTES)
         .build()
 }
 
