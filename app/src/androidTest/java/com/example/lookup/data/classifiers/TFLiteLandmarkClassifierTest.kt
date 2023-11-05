@@ -30,8 +30,7 @@ class TFLiteLandmarkClassifierTest {
             .build()
 
         val result = (context.imageLoader.execute(request) as SuccessResult).drawable
-        // https://stackoverflow.com/questions/62973484/tensorimage-cannot-load-bitmap
-        val bitmap = (result as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        val bitmap = (result as BitmapDrawable).bitmap
         val classificationName = classifier.classify(
             bitmap,
             LandmarksClassifier.Rotation.ROTATION_90

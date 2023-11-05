@@ -71,9 +71,12 @@ class TFLiteLandmarkClassifier @Inject constructor(
                 return@withContext Result.failure(exception)
             }
         }
+        // convert the bitmap to a bitmap that can be used by Tensorflow
+        // https://stackoverflow.com/questions/62973484/tensorimage-cannot-load-bitmap
+        val tensorflowBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, false)
         try {
             val imageProcessor = ImageProcessor.Builder().build()
-            val tensorImage = imageProcessor.process(TensorImage.fromBitmap(bitmap))
+            val tensorImage = imageProcessor.process(TensorImage.fromBitmap(tensorflowBitmap))
             val imageProcessingOptions = ImageProcessingOptions.builder()
                 .setOrientation(rotation.toOrientation())
                 .build()
