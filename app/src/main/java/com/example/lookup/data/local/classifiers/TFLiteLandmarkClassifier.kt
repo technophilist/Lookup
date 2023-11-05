@@ -71,16 +71,22 @@ class TFLiteLandmarkClassifier @Inject constructor(
                 return@withContext Result.failure(exception)
             }
         }
-        val imageProcessor = ImageProcessor.Builder().build()
-        val tensorImage = imageProcessor.process(TensorImage.fromBitmap(bitmap))
-        val imageProcessingOptions = ImageProcessingOptions.builder()
-            .setOrientation(rotation.toOrientation())
-            .build()
-        val results = classifier?.classify(tensorImage, imageProcessingOptions)
-            ?.flatMap { classifications ->
-                classifications.categories.map { it.toLandMarkClassification() }
-            } ?: emptyList()
-        Result.success(results)
+        try {
+            val imageProcessor = ImageProcessor.Builder().build()
+            val tensorImage = imageProcessor.process(TensorImage.fromBitmap(bitmap))
+            val imageProcessingOptions = ImageProcessingOptions.builder()
+                .setOrientation(rotation.toOrientation())
+                .build()
+            val results = classifier?.classify(tensorImage, imageProcessingOptions)
+                ?.flatMap { classifications ->
+                    classifications.categories.map { it.toLandMarkClassification() }
+                } ?: emptyList()
+            return@withContext Result.success(results)
+        } catch (exception: Exception) {
+            if (exception is CancellationException) throw exception
+            // unable to create classifier
+            return@withContext Result.failure(exception)
+        }
     }
 
     /**
