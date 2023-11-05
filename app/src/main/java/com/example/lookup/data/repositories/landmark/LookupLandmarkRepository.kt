@@ -9,11 +9,11 @@ import com.example.lookup.data.remote.languagemodels.textgenerator.models.firstR
 import javax.inject.Inject
 
 // TODO : add cache with age
-class LandmarkRecognitionRepository @Inject constructor(
+class LookupLandmarkRepository @Inject constructor(
     private val landmarksClassifier: LandmarksClassifier,
     private val textGeneratorClient: TextGeneratorClient
 ) : LandmarkRepository {
-    
+
     override suspend fun getDescriptionAboutLandmark(
         bitmap: Bitmap,
         surfaceRotation: Int

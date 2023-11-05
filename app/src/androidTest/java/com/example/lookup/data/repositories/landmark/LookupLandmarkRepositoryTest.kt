@@ -13,7 +13,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-class LandmarkRecognitionRepositoryTest {
+class LookupLandmarkRepositoryTest {
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val testDispatcher = StandardTestDispatcher()
@@ -22,7 +22,7 @@ class LandmarkRecognitionRepositoryTest {
         ioDispatcher = testDispatcher,
         classifierConfiguration = LandmarksClassifier.ClassifierConfiguration()
     )
-    private val landmarkRecognitionRepository = LandmarkRecognitionRepository(
+    private val landmarkRecognitionRepository = LookupLandmarkRepository(
         landmarksClassifier = classifier,
         textGeneratorClient = NetworkModule.provideTextGeneratorClient()
     )
