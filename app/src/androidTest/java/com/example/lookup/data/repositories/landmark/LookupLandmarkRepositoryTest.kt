@@ -36,14 +36,13 @@ class LookupLandmarkRepositoryTest {
                 .data(goldenGateBridgeUrl)
                 .build()
 
-            val result = (context.imageLoader.execute(request) as SuccessResult).drawable
-            val bitmap = (result as BitmapDrawable).bitmap
-            val description = landmarkRecognitionRepository.getDescriptionAboutLandmark(
+            val drawable = (context.imageLoader.execute(request) as SuccessResult).drawable
+            val bitmap = (drawable as BitmapDrawable).bitmap
+            val result = landmarkRecognitionRepository.getNameAndDescriptionOfLandmark(
                 bitmap,
                 Surface.ROTATION_90
-            ).getOrNull()
-            assert(description != null)
-            println(description)
+            )
+            assert(result.isSuccess)
         }
 
     @Test
@@ -55,9 +54,9 @@ class LookupLandmarkRepositoryTest {
                 .data(goldenGateBridgeUrl)
                 .build()
 
-            val result = (context.imageLoader.execute(request) as SuccessResult).drawable
-            val bitmap = (result as BitmapDrawable).bitmap
-            val descriptionResult = landmarkRecognitionRepository.getDescriptionAboutLandmark(
+            val drawable = (context.imageLoader.execute(request) as SuccessResult).drawable
+            val bitmap = (drawable as BitmapDrawable).bitmap
+            val descriptionResult = landmarkRecognitionRepository.getNameAndDescriptionOfLandmark(
                 bitmap,
                 Int.MIN_VALUE
             )

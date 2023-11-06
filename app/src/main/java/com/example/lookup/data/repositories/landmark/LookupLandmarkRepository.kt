@@ -14,10 +14,10 @@ class LookupLandmarkRepository @Inject constructor(
     private val textGeneratorClient: TextGeneratorClient
 ) : LandmarkRepository {
 
-    override suspend fun getDescriptionAboutLandmark(
+    override suspend fun getNameAndDescriptionOfLandmark(
         bitmap: Bitmap,
         surfaceRotation: Int
-    ): Result<String> {
+    ): Result<Pair<String, String>> {
         // check if a valid value was provided for surface rotation
         val surfaceRotations = listOf(
             Surface.ROTATION_0,
@@ -30,15 +30,20 @@ class LookupLandmarkRepository @Inject constructor(
                 "Invalid rotation. Please use one of the rotation constants from android.view.Surface."
             return Result.failure(IllegalArgumentException(exceptionMessage))
         }
-        // classify based on the bitmap
+
+        // get name of landmark
         val classifierResult = landmarksClassifier.classify(
             bitmap = bitmap,
             rotation = convertSurfaceRotationToLandmarkRotation(surfaceRotation)
         )
         if (classifierResult.isFailure) return Result.failure(classifierResult.exceptionOrNull()!!)
-        // generate information about location
-        val identifiedLocation = classifierResult.getOrNull()!!.first().name
-        return generateDescriptionForIdentifiedLocation(identifiedLocation)
+        val nameOfIdentifiedLocation = classifierResult.getOrNull()!!.first().name
+
+        // generate description about landmark
+        val descriptionRequest = generateDescriptionForIdentifiedLocation(nameOfIdentifiedLocation)
+        if (descriptionRequest.isFailure) return Result.failure(descriptionRequest.exceptionOrNull()!!)
+        val descriptionOfLandmark = descriptionRequest.getOrNull()!!
+        return Result.success(Pair(nameOfIdentifiedLocation, descriptionOfLandmark))
     }
 
     override suspend fun getFAQListAboutLandmark(landmarkName: String): Result<List<String>> {

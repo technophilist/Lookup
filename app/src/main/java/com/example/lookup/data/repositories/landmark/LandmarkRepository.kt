@@ -8,13 +8,16 @@ import android.view.Surface
  */
 interface LandmarkRepository {
     /**
-     * Retrieves a brief description of the landmark in the given [bitmap].
+     * Retrieves the name and a brief description of the landmark in the given [bitmap].
      *
      * @param bitmap The bitmap containing the landmark.
      * @param surfaceRotation One of the rotation constants defined in [Surface].
-     * @return A [Result] object containing the description of the landmark.
+     * @return A [Result] object containing the name and description of the landmark.
      */
-    suspend fun getDescriptionAboutLandmark(bitmap: Bitmap, surfaceRotation: Int): Result<String>
+    suspend fun getNameAndDescriptionOfLandmark(
+        bitmap: Bitmap,
+        surfaceRotation: Int
+    ): Result<Pair<String, String>>
 
     /**
      * Retrieves a list of frequently asked questions about a landmark.
