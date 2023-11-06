@@ -3,16 +3,11 @@ package com.example.lookup.ui.home
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +29,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
@@ -74,7 +67,6 @@ import com.example.lookup.R
 import com.example.lookup.ui.utils.BookmarkAdd
 import com.example.lookup.ui.utils.BookmarkAdded
 import com.example.lookup.ui.utils.Bookmarks
-import kotlinx.coroutines.delay
 
 /**
  * A data class representing an identified location.
@@ -117,6 +109,7 @@ data class IdentifiedLocation(
 
 @Composable
 fun HomeScreen(
+    cameraController: LifecycleCameraController,
     homeScreenUiState: HomeScreenUiState,
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
@@ -125,6 +118,7 @@ fun HomeScreen(
 ) {
     HomeScreen(
         modifier = modifier,
+        cameraController = cameraController,
         identifiedLocation = homeScreenUiState.identifiedLocation,
         isAnalyzing = false,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
@@ -136,6 +130,7 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    cameraController: LifecycleCameraController,
     identifiedLocation: IdentifiedLocation?,
     isAnalyzing: Boolean,
     navigateToBookmarkedLocations: () -> Unit,
@@ -149,11 +144,6 @@ fun HomeScreen(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isCameraPermissionGranted = it }
     )
-    val controller = remember {
-        LifecycleCameraController(context).apply {
-            setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
-        }
-    }
     val bottomSheetState = rememberModalBottomSheetState()
     var isBottomSheetVisible by remember(identifiedLocation) { mutableStateOf(identifiedLocation != null) }
     val analyzingAnimationComposition by rememberLottieComposition(
@@ -168,7 +158,7 @@ fun HomeScreen(
 
     Box(modifier = modifier) {
         if (isCameraPermissionGranted) {
-            CameraPreview(modifier = Modifier.fillMaxSize(), controller = controller)
+            CameraPreview(modifier = Modifier.fillMaxSize(), controller = cameraController)
         } else {
             DefaultBackground(modifier = Modifier.fillMaxSize())
         }
