@@ -120,7 +120,7 @@ fun HomeScreen(
         modifier = modifier,
         cameraController = cameraController,
         identifiedLocation = homeScreenUiState.identifiedLocation,
-        isAnalyzing = false,
+        isAnalyzing = homeScreenUiState.isAnalyzing,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
         onBookmarkIconClick = onBookmarkIconClick,
         onSuggestionClick = onSuggestionClick
