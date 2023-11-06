@@ -8,5 +8,6 @@ package com.example.lookup.ui.home
  */
 data class HomeScreenUiState(
     val identifiedLocation: IdentifiedLocation? = null,
-    val isAnalyzing: Boolean = false
+    val isAnalyzing: Boolean = false,
+    val errorOccurredWhenAnalyzing: Boolean = false
 )
