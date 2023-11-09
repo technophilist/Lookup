@@ -6,9 +6,10 @@ import com.example.lookup.data.local.classifiers.LandmarksClassifier
 import com.example.lookup.data.remote.languagemodels.textgenerator.TextGeneratorClient
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.buildTextGenerationPromptBody
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.firstResponse
+import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 
-// TODO : add cache with age
+// TODO : add cache
 class LookupLandmarkRepository @Inject constructor(
     private val landmarksClassifier: LandmarksClassifier,
     private val textGeneratorClient: TextGeneratorClient
@@ -17,33 +18,24 @@ class LookupLandmarkRepository @Inject constructor(
     override suspend fun getNameAndDescriptionOfLandmark(
         bitmap: Bitmap,
         surfaceRotation: Int
-    ): Result<Pair<String, String>> {
+    ): Result<Pair<String, String>> = try {
         // check if a valid value was provided for surface rotation
-        val surfaceRotations = listOf(
-            Surface.ROTATION_0,
-            Surface.ROTATION_90,
-            Surface.ROTATION_180,
-            Surface.ROTATION_270
-        )
-        if (surfaceRotation !in surfaceRotations) {
+        if (!isValidSurfaceRotationConstant(surfaceRotation)) {
             val exceptionMessage =
                 "Invalid rotation. Please use one of the rotation constants from android.view.Surface."
-            return Result.failure(IllegalArgumentException(exceptionMessage))
+            throw IllegalArgumentException(exceptionMessage)
         }
-
         // get name of landmark
-        val classifierResult = landmarksClassifier.classify(
+        val nameOfIdentifiedLocation = landmarksClassifier.classify(
             bitmap = bitmap,
             rotation = convertSurfaceRotationToLandmarkRotation(surfaceRotation)
-        )
-        if (classifierResult.isFailure) return Result.failure(classifierResult.exceptionOrNull()!!)
-        val nameOfIdentifiedLocation = classifierResult.getOrNull()!!.first().name
-
-        // generate description about landmark
-        val descriptionRequest = generateDescriptionForIdentifiedLocation(nameOfIdentifiedLocation)
-        if (descriptionRequest.isFailure) return Result.failure(descriptionRequest.exceptionOrNull()!!)
-        val descriptionOfLandmark = descriptionRequest.getOrNull()!!
-        return Result.success(Pair(nameOfIdentifiedLocation, descriptionOfLandmark))
+        ).getOrThrow().first().name
+        val descriptionOfLandmark = generateDescription(nameOfIdentifiedLocation)
+            .getOrThrow()
+        Result.success(Pair(nameOfIdentifiedLocation, descriptionOfLandmark))
+    } catch (exception: Exception) {
+        if (exception is CancellationException) throw exception
+        Result.failure(exception)
     }
 
     override suspend fun getFAQListAboutLandmark(landmarkName: String): Result<List<String>> {
@@ -64,7 +56,7 @@ class LookupLandmarkRepository @Inject constructor(
         return Result.success(questionsList)
     }
 
-    private suspend fun generateDescriptionForIdentifiedLocation(identifiedLocation: String): Result<String> {
+    private suspend fun generateDescription(identifiedLocation: String): Result<String> {
         val promptBody = buildTextGenerationPromptBody(
             systemPrompt = "You are a travel guide. Give a concise explanation about this landmark.",
             userPrompt = identifiedLocation,
@@ -88,6 +80,16 @@ class LookupLandmarkRepository @Inject constructor(
             Surface.ROTATION_180 -> LandmarksClassifier.Rotation.ROTATION_180
             else -> LandmarksClassifier.Rotation.ROTATION_270
         }
+    }
+
+    fun isValidSurfaceRotationConstant(surfaceRotation: Int): Boolean {
+        val surfaceRotations = listOf(
+            Surface.ROTATION_0,
+            Surface.ROTATION_90,
+            Surface.ROTATION_180,
+            Surface.ROTATION_270
+        )
+        return surfaceRotation in surfaceRotations
     }
 
 }
