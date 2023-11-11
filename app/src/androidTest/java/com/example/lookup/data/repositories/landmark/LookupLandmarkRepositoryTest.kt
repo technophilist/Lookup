@@ -44,8 +44,8 @@ class LookupLandmarkRepositoryTest {
             val drawable = (context.imageLoader.execute(request) as SuccessResult).drawable
             val bitmap = (drawable as BitmapDrawable).bitmap
             val result = landmarkRecognitionRepository.getNameAndDescriptionOfLandmark(
-                bitmap,
-                Surface.ROTATION_90
+                bitmap = bitmap,
+                rotationDegrees = 90
             )
             assert(result.isSuccess)
         }
@@ -90,8 +90,8 @@ class LookupLandmarkRepositoryTest {
             val drawable = (context.imageLoader.execute(request) as SuccessResult).drawable
             val bitmap = (drawable as BitmapDrawable).bitmap
             val result = landmarkRecognitionRepository.getNameAndDescriptionOfLandmark(
-                bitmap,
-                Surface.ROTATION_90
+                bitmap = bitmap,
+                rotationDegrees = 90
             )
             assert(result.isSuccess)
             // after a landmark is recognized, it must be saved in the cache.

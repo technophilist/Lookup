@@ -11,12 +11,13 @@ interface LandmarkRepository {
      * Retrieves the name and a brief description of the landmark in the given [bitmap].
      *
      * @param bitmap The bitmap containing the landmark.
-     * @param surfaceRotation One of the rotation constants defined in [Surface].
+     * @param rotationDegrees The rotation in degrees which will be a value in {0, 90, 180, 270}.
+     * This value is used to denote the rotation of the [bitmap] in degrees.
      * @return A [Result] object containing the name and description of the landmark.
      */
     suspend fun getNameAndDescriptionOfLandmark(
         bitmap: Bitmap,
-        surfaceRotation: Int
+        rotationDegrees: Int
     ): Result<Pair<String, String>>
 
     /**

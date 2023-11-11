@@ -1,7 +1,6 @@
 package com.example.lookup.data.repositories.landmark
 
 import android.graphics.Bitmap
-import android.view.Surface
 import com.example.lookup.data.local.cache.landmarks.RecognizedLandmarkEntity
 import com.example.lookup.data.local.cache.landmarks.RecognizedLandmarksDao
 import com.example.lookup.data.local.classifiers.LandmarksClassifier
@@ -20,18 +19,17 @@ class LookupLandmarkRepository @Inject constructor(
 
     override suspend fun getNameAndDescriptionOfLandmark(
         bitmap: Bitmap,
-        surfaceRotation: Int
+        rotationDegrees: Int
     ): Result<Pair<String, String>> = try {
-        // check if a valid value was provided for surface rotation
-        if (!isValidSurfaceRotationConstant(surfaceRotation)) {
-            val exceptionMessage =
-                "Invalid rotation. Please use one of the rotation constants from android.view.Surface."
+        // check if a valid value was provided for rotationDegrees
+        if (!isValidRotationDegrees(rotationDegrees)) {
+            val exceptionMessage = "Please use a valid rotation constant. ie: {0,90,180 or 270}"
             throw IllegalArgumentException(exceptionMessage)
         }
         // get name of landmark
         val nameOfIdentifiedLocation = landmarksClassifier.classify(
             bitmap = bitmap,
-            rotation = convertSurfaceRotationToLandmarkRotation(surfaceRotation)
+            rotation = convertRotationDegreesToLandmarkRotation(rotationDegrees)
         ).getOrThrow().first().name
         // check cache before making network call
         val landmarkEntity = recognizedLandmarksDao
@@ -90,23 +88,18 @@ class LookupLandmarkRepository @Inject constructor(
         return Result.success(description)
     }
 
-    private fun convertSurfaceRotationToLandmarkRotation(surfaceRotation: Int): LandmarksClassifier.Rotation {
+    private fun convertRotationDegreesToLandmarkRotation(surfaceRotation: Int): LandmarksClassifier.Rotation {
         return when (surfaceRotation) {
-            Surface.ROTATION_0 -> LandmarksClassifier.Rotation.ROTATION_0
-            Surface.ROTATION_90 -> LandmarksClassifier.Rotation.ROTATION_90
-            Surface.ROTATION_180 -> LandmarksClassifier.Rotation.ROTATION_180
+            0 -> LandmarksClassifier.Rotation.ROTATION_0
+            90 -> LandmarksClassifier.Rotation.ROTATION_90
+            180 -> LandmarksClassifier.Rotation.ROTATION_180
             else -> LandmarksClassifier.Rotation.ROTATION_270
         }
     }
 
-    private fun isValidSurfaceRotationConstant(surfaceRotation: Int): Boolean {
-        val surfaceRotations = listOf(
-            Surface.ROTATION_0,
-            Surface.ROTATION_90,
-            Surface.ROTATION_180,
-            Surface.ROTATION_270
-        )
-        return surfaceRotation in surfaceRotations
+    private fun isValidRotationDegrees(surfaceRotation: Int): Boolean {
+        val validRotations = listOf(0, 90, 180, 270)
+        return surfaceRotation in validRotations
     }
 
 }
