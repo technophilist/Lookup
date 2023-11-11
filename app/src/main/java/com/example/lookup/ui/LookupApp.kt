@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,9 +36,11 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
     NavHost(navController = navController, startDestination = LookupDestinations.HomeScreen.route) {
         composable(LookupDestinations.HomeScreen.route) {
             val context = LocalContext.current
+            val lifecycleOwner = LocalLifecycleOwner.current
             val cameraController = remember(context) {
                 LifecycleCameraController(context).apply {
                     setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
+                    bindToLifecycle(lifecycleOwner)
                 }
             }
             HomeScreen(
