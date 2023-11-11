@@ -73,7 +73,7 @@ class LookupLandmarkRepository @Inject constructor(
 
     private suspend fun generateDescription(identifiedLocation: String): Result<String> {
         val promptBody = buildTextGenerationPromptBody(
-            systemPrompt = "You are a travel guide. Give a concise explanation about this landmark.",
+            systemPrompt = "You are a travel guide. Give a very short summary of this landmark.",
             userPrompt = identifiedLocation,
             maxResponseTokens = 100
         )
