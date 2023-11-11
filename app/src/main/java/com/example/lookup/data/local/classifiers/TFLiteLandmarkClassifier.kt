@@ -2,6 +2,7 @@ package com.example.lookup.data.local.classifiers
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import androidx.camera.core.ImageAnalysis
 import androidx.core.graphics.scale
 import com.example.lookup.di.IODispatcher
@@ -72,17 +73,14 @@ class TFLiteLandmarkClassifier @Inject constructor(
                 return@withContext Result.failure(exception)
             }
         }
-        // convert the bitmap to a bitmap that can be used by Tensorflow
-        // https://stackoverflow.com/questions/62973484/tensorimage-cannot-load-bitmap
-        // Also, scale down the image to 321x321.
-        // https://tfhub.dev/google/on_device_vision/classifier/landmarks_classifier_north_america_V1/1
-        val tensorflowBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, false)
-            .scale(width = 321, height = 321)
+
+        val processedBitmapForAnalysis = getProcessedBitmapForAnalysis(bitmap, rotation)
+        val tensorImage = TensorImage.fromBitmap(processedBitmapForAnalysis)
         try {
             val imageProcessor = ImageProcessor.Builder().build()
-            val tensorImage = imageProcessor.process(TensorImage.fromBitmap(tensorflowBitmap))
+            val tensorImage = imageProcessor.process(tensorImage)
             val imageProcessingOptions = ImageProcessingOptions.builder()
-                .setOrientation(rotation.toOrientation())
+                .setOrientation(ImageProcessingOptions.Orientation.TOP_LEFT) // http://jpegclub.org/exif_orientation.html
                 .build()
             val results = classifier?.classify(tensorImage, imageProcessingOptions)
                 ?.flatMap { classifications ->
@@ -104,19 +102,32 @@ class TFLiteLandmarkClassifier @Inject constructor(
         score = this.score
     )
 
-    /**
-     * Used to convert [LandmarksClassifier.Rotation] to [ImageProcessingOptions.Orientation],
-     * Remember that [ImageProcessingOptions.Orientation] is based off of the EXIF orientation
-     * standard - http://jpegclub.org/exif_orientation.html. The default, portrait orientation is
-     * 90 degrees (checked using [ImageAnalysis.Analyzer]).
-     */
-    private fun LandmarksClassifier.Rotation.toOrientation(): ImageProcessingOptions.Orientation {
-        return when (this) {
-            LandmarksClassifier.Rotation.ROTATION_0 -> ImageProcessingOptions.Orientation.LEFT_BOTTOM
-            LandmarksClassifier.Rotation.ROTATION_90 -> ImageProcessingOptions.Orientation.TOP_LEFT
-            LandmarksClassifier.Rotation.ROTATION_180 -> ImageProcessingOptions.Orientation.RIGHT_TOP
-            LandmarksClassifier.Rotation.ROTATION_270 -> ImageProcessingOptions.Orientation.BOTTOM_RIGHT
+    // convert the bitmap to a bitmap that can be used by Tensorflow
+    // https://stackoverflow.com/questions/62973484/tensorimage-cannot-load-bitmap
+    // Also, scale down the image to 321x321.
+    // https://tfhub.dev/google/on_device_vision/classifier/landmarks_classifier_north_america_V1/1
+    private fun getProcessedBitmapForAnalysis(
+        bitmap: Bitmap,
+        rotationToMakeBitmapUpright: LandmarksClassifier.Rotation
+    ): Bitmap {
+        val tensorFlowCompatibleBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+            .scale(width = 321, height = 321)
+        val rotationToBeApplied = when (rotationToMakeBitmapUpright) {
+            LandmarksClassifier.Rotation.ROTATION_0 -> return tensorFlowCompatibleBitmap
+            LandmarksClassifier.Rotation.ROTATION_90 -> 90f
+            LandmarksClassifier.Rotation.ROTATION_180 -> 180f
+            LandmarksClassifier.Rotation.ROTATION_270 -> 270f
         }
+        // rotate image to make it "upright"
+        return Bitmap.createBitmap(
+            tensorFlowCompatibleBitmap,
+            0,
+            0,
+            tensorFlowCompatibleBitmap.width,
+            tensorFlowCompatibleBitmap.height,
+            Matrix().apply { postRotate(rotationToBeApplied) },
+            false
+        )
     }
 
     companion object {
