@@ -50,8 +50,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -155,6 +157,7 @@ fun HomeScreen(
             R.raw.anayzing_animation
         )
     )
+    val localHapticFeedback = LocalHapticFeedback.current
 
     LaunchedEffect(Unit) {
         cameraPermissionLauncher.launch(REQUIRED_CAMERA_PERMISSION)
@@ -196,6 +199,10 @@ fun HomeScreen(
                     .padding(16.dp)
             )
         }
+    }
+    LaunchedEffect(identifiedLocation) {
+        // perform haptic feedback when a location is identified
+        if (identifiedLocation != null) localHapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
     }
     if (isBottomSheetVisible) {
         ModalBottomSheet(
