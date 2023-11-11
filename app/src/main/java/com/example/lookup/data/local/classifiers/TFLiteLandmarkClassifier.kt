@@ -3,6 +3,7 @@ package com.example.lookup.data.local.classifiers
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.camera.core.ImageAnalysis
+import androidx.core.graphics.scale
 import com.example.lookup.di.IODispatcher
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
@@ -73,7 +74,10 @@ class TFLiteLandmarkClassifier @Inject constructor(
         }
         // convert the bitmap to a bitmap that can be used by Tensorflow
         // https://stackoverflow.com/questions/62973484/tensorimage-cannot-load-bitmap
+        // Also, scale down the image to 321x321.
+        // https://tfhub.dev/google/on_device_vision/classifier/landmarks_classifier_north_america_V1/1
         val tensorflowBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, false)
+            .scale(width = 321, height = 321)
         try {
             val imageProcessor = ImageProcessor.Builder().build()
             val tensorImage = imageProcessor.process(TensorImage.fromBitmap(tensorflowBitmap))
