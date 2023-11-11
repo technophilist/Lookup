@@ -2,6 +2,8 @@ package com.example.lookup.data.repositories.landmark
 
 import android.graphics.Bitmap
 import android.view.Surface
+import com.example.lookup.data.local.cache.landmarks.RecognizedLandmarkEntity
+import com.example.lookup.data.local.cache.landmarks.RecognizedLandmarksDao
 import com.example.lookup.data.local.classifiers.LandmarksClassifier
 import com.example.lookup.data.remote.languagemodels.textgenerator.TextGeneratorClient
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.buildTextGenerationPromptBody
@@ -12,7 +14,8 @@ import javax.inject.Inject
 // TODO : add cache
 class LookupLandmarkRepository @Inject constructor(
     private val landmarksClassifier: LandmarksClassifier,
-    private val textGeneratorClient: TextGeneratorClient
+    private val textGeneratorClient: TextGeneratorClient,
+    private val recognizedLandmarksDao: RecognizedLandmarksDao
 ) : LandmarkRepository {
 
     override suspend fun getNameAndDescriptionOfLandmark(
@@ -30,8 +33,22 @@ class LookupLandmarkRepository @Inject constructor(
             bitmap = bitmap,
             rotation = convertSurfaceRotationToLandmarkRotation(surfaceRotation)
         ).getOrThrow().first().name
-        val descriptionOfLandmark = generateDescription(nameOfIdentifiedLocation)
-            .getOrThrow()
+        // check cache before making network call
+        val landmarkEntity = recognizedLandmarksDao
+            .getRecognizedLandmarkEntityWithName(nameOfIdentifiedLocation)
+        var descriptionOfLandmark = landmarkEntity?.description
+        if (descriptionOfLandmark == null) {
+            // if not in cache, fetch and save in cache
+            descriptionOfLandmark = generateDescription(nameOfIdentifiedLocation).getOrThrow()
+            val entityToSaveInCache = RecognizedLandmarkEntity(
+                name = nameOfIdentifiedLocation,
+                imageUrls = emptyList(), // TODO
+                suggestedQueriesForLocation = emptyList(), // TODO
+                description = descriptionOfLandmark,
+                isBookmarked = false
+            )
+            recognizedLandmarksDao.insertRecognizedLandmark(entityToSaveInCache)
+        }
         Result.success(Pair(nameOfIdentifiedLocation, descriptionOfLandmark))
     } catch (exception: Exception) {
         if (exception is CancellationException) throw exception
