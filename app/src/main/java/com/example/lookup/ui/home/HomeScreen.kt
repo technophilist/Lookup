@@ -64,6 +64,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.lookup.ui.components.CameraPreview
 import com.example.lookup.R
+import com.example.lookup.ui.components.ShutterButton
 import com.example.lookup.ui.utils.BookmarkAdd
 import com.example.lookup.ui.utils.BookmarkAdded
 import com.example.lookup.ui.utils.Bookmarks
@@ -114,11 +115,13 @@ fun HomeScreen(
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
     onSuggestionClick: (index: Int) -> Unit,
+    onShutterButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HomeScreen(
         modifier = modifier,
         cameraController = cameraController,
+        onShutterButtonClick = onShutterButtonClick,
         identifiedLocation = homeScreenUiState.identifiedLocation,
         isAnalyzing = homeScreenUiState.isAnalyzing,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
@@ -136,6 +139,7 @@ fun HomeScreen(
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
     onSuggestionClick: (index: Int) -> Unit,
+    onShutterButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -181,6 +185,15 @@ fun HomeScreen(
                 composition = analyzingAnimationComposition,
                 reverseOnRepeat = true,
                 iterations = LottieConstants.IterateForever
+            )
+        }
+        if (isCameraPermissionGranted) {
+            ShutterButton(
+                onClick = onShutterButtonClick,
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
             )
         }
     }

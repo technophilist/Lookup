@@ -45,6 +45,7 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
             }
             HomeScreen(
                 cameraController = cameraController,
+                onShutterButtonClick = {/*TODO*/ },
                 homeScreenUiState = HomeScreenUiState(),
                 navigateToBookmarkedLocations = { /*TODO*/ },
                 onBookmarkIconClick = { /*TODO*/ },
