@@ -327,14 +327,11 @@ private fun IdentifiedLocationInfoCard(
 ) {
     OutlinedCard(modifier = modifier) {
         Text(
-            modifier = Modifier.padding(top = 8.dp, start = 16.dp),
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp),
             text = identifiedLocation.title,
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
         )
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            text = identifiedLocation.content
-        )
+        Text(modifier = Modifier.padding(16.dp), text = identifiedLocation.content)
     }
 }
 
