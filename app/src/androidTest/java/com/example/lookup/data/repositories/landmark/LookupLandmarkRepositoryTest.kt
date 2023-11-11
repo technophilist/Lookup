@@ -12,6 +12,7 @@ import com.example.lookup.di.NetworkModule
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import kotlin.time.Duration.Companion.seconds
 
 class LookupLandmarkRepositoryTest {
 
@@ -29,7 +30,7 @@ class LookupLandmarkRepositoryTest {
 
     @Test
     fun imageAnalysisTest_GoldenGateBridge_classifiedCorrectlyWithAppropriateDescription() =
-        runTest(testDispatcher) {
+        runTest(context = testDispatcher, timeout = 30.seconds) {
             val goldenGateBridgeUrl =
                 "https://fastly.picsum.photos/id/392/5000/3333.jpg?hmac=vCaGuB6rQAiaofdQHatQL4DHgkyR2l-Ms9GWAL63CBQ"
             val request = ImageRequest.Builder(context)
@@ -65,7 +66,7 @@ class LookupLandmarkRepositoryTest {
 
     @Test
     fun faqListAboutIdentifierLandmark_validLandmarkName_listOfQuestionsGeneratedSuccessfully() =
-        runTest(testDispatcher) {
+        runTest(context = testDispatcher, timeout = 30.seconds) {
             val questionsList = landmarkRecognitionRepository
                 .getFAQListAboutLandmark(landmarkName = "Golden Gate Bridge")
                 .getOrNull()
