@@ -99,7 +99,7 @@ class LookupLandmarkRepository @Inject constructor(
         }
     }
 
-    fun isValidSurfaceRotationConstant(surfaceRotation: Int): Boolean {
+    private fun isValidSurfaceRotationConstant(surfaceRotation: Int): Boolean {
         val surfaceRotations = listOf(
             Surface.ROTATION_0,
             Surface.ROTATION_90,
