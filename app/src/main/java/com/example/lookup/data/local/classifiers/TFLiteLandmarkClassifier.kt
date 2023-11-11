@@ -3,7 +3,6 @@ package com.example.lookup.data.local.classifiers
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import androidx.camera.core.ImageAnalysis
 import androidx.core.graphics.scale
 import com.example.lookup.di.IODispatcher
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -56,13 +55,13 @@ class TFLiteLandmarkClassifier @Inject constructor(
     }
 
     /**
-     * Classifies the landmark in the [bitmap], taking into consideration the [rotation]
+     * Classifies the landmark in the [bitmap], taking into consideration the [rotationDegreesToMakeBitmapUpright]
      * of the image and returns an instance of [Result] object containing the list of classified landmarks,
      * or an [Exception] if classification failed
      */
     override suspend fun classify(
         bitmap: Bitmap,
-        rotation: LandmarksClassifier.Rotation
+        rotationDegreesToMakeBitmapUpright: LandmarksClassifier.Rotation
     ): Result<List<LandmarksClassifier.LandmarkClassification>> = withContext(ioDispatcher) {
         if (classifier == null) {
             try {
@@ -74,7 +73,7 @@ class TFLiteLandmarkClassifier @Inject constructor(
             }
         }
 
-        val processedBitmapForAnalysis = getProcessedBitmapForAnalysis(bitmap, rotation)
+        val processedBitmapForAnalysis = getProcessedBitmapForAnalysis(bitmap, rotationDegreesToMakeBitmapUpright)
         val tensorImage = TensorImage.fromBitmap(processedBitmapForAnalysis)
         try {
             val imageProcessor = ImageProcessor.Builder().build()

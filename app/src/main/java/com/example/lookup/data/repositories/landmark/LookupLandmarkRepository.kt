@@ -29,7 +29,7 @@ class LookupLandmarkRepository @Inject constructor(
         // get name of landmark
         val nameOfIdentifiedLocation = landmarksClassifier.classify(
             bitmap = bitmap,
-            rotation = convertRotationDegreesToLandmarkRotation(rotationDegrees)
+            rotationDegreesToMakeBitmapUpright = convertRotationDegreesToLandmarkRotation(rotationDegrees)
         ).getOrThrow().first().name
         // check cache before making network call
         val landmarkEntity = recognizedLandmarksDao

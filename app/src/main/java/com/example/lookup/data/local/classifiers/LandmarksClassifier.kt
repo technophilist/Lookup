@@ -8,13 +8,13 @@ import android.graphics.Bitmap
 interface LandmarksClassifier {
 
     /**
-     * Classifies the landmark in the [bitmap], taking into consideration the [rotation]
+     * Classifies the landmark in the [bitmap], taking into consideration the [rotationDegreesToMakeBitmapUpright]
      * of the image and returns an instance of [Result] object containing the list of classified landmarks,
      * or an [Exception] if classification failed
      */
     suspend fun classify(
         bitmap: Bitmap,
-        rotation: Rotation
+        rotationDegreesToMakeBitmapUpright: Rotation
     ): Result<List<LandmarkClassification>>
 
     /**
