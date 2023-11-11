@@ -5,7 +5,10 @@ import com.example.lookup.data.remote.languagemodels.textgenerator.models.TextGe
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.buildTextGenerationPromptBody
 import com.example.lookup.di.NetworkModule
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import retrofit2.http.Streaming
+import kotlin.time.Duration.Companion.seconds
 
 class TextGeneratorClientTest {
 
@@ -13,7 +16,7 @@ class TextGeneratorClientTest {
 
     @Test
     fun `Given a valid system & user prompt, the API must successfully return a response with the generated text`() =
-        runBlocking {
+        runTest(timeout = 30.seconds) {
             val messages = listOf(
                 MessageDTO(
                     role = MessageDTO.Roles.SYSTEM,
@@ -37,7 +40,7 @@ class TextGeneratorClientTest {
 
     @Test
     fun `Given an API response of possible questions, the result must be successfully parsed into valid strings`() =
-        runBlocking {
+        runTest(timeout = 30.seconds) {
             val systemPrompt = """
                 List out 5 very short questions that a traveller might ask a guide about this place.
             """.trimIndent()
