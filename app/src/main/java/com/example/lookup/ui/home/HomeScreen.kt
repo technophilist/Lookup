@@ -194,7 +194,7 @@ fun HomeScreen(
                 iterations = LottieConstants.IterateForever
             )
         }
-        if (isCameraPermissionGranted) {
+        if (isCameraPermissionGranted && !isAnalyzing) {
             ShutterButton(
                 onClick = onShutterButtonClick,
                 modifier = Modifier
