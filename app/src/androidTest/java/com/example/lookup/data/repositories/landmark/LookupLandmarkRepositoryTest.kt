@@ -29,7 +29,8 @@ class LookupLandmarkRepositoryTest {
     private val landmarkRecognitionRepository = LookupLandmarkRepository(
         landmarksClassifier = classifier,
         textGeneratorClient = NetworkModule.provideTextGeneratorClient(),
-        recognizedLandmarksDao = testRecognizedLandmarkDao
+        recognizedLandmarksDao = testRecognizedLandmarkDao,
+        imageClient = NetworkModule.provideImageClient()
     )
 
     @Test
