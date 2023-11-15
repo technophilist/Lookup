@@ -52,11 +52,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -337,12 +339,24 @@ private fun IdentifiedLocationInfoCard(
     modifier: Modifier = Modifier,
     identifiedLocation: IdentifiedLocation.InfoCardContent
 ) {
+    val bardIcon = ImageVector.vectorResource(id = R.drawable.ic_bard_logo)
     OutlinedCard(modifier = modifier) {
-        Text(
+        Row(
             modifier = Modifier.padding(top = 16.dp, start = 16.dp),
-            text = identifiedLocation.title,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                imageVector = bardIcon,
+                contentDescription = null,
+                tint = Color.Unspecified
+            )
+            Text(
+                text = identifiedLocation.title,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            )
+        }
         Text(modifier = Modifier.padding(16.dp), text = identifiedLocation.content)
     }
 }
