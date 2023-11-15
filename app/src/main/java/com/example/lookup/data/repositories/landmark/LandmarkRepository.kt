@@ -27,4 +27,18 @@ interface LandmarkRepository {
      * @return A [Result] object containing the list of frequently asked questions.
      */
     suspend fun getFAQListAboutLandmark(landmarkName: String): Result<List<String>>
+
+
+    /**
+     * Retrieves a list of image URLs for a specific landmark.
+     *
+     * @param nameOfLandmark The name of the landmark.
+     * @param imageFidelity The desired [LookupLandmarkRepository.ImageFidelity] level for the
+     * images in the returned list of URLs.
+     * @return A [Result] containing a list of image URLs if successful, or an exception if an error occurs.
+     */
+    suspend fun getImageUrlListForLandmark(
+        nameOfLandmark: String,
+        imageFidelity: LookupLandmarkRepository.ImageFidelity = LookupLandmarkRepository.ImageFidelity.MEDIUM
+    ): Result<List<String>>
 }

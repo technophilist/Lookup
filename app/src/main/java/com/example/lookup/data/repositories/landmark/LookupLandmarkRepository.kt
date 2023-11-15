@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.example.lookup.data.local.cache.landmarks.RecognizedLandmarkEntity
 import com.example.lookup.data.local.cache.landmarks.RecognizedLandmarksDao
 import com.example.lookup.data.local.classifiers.LandmarksClassifier
+import com.example.lookup.data.remote.imageclient.ImageClient
 import com.example.lookup.data.remote.languagemodels.textgenerator.TextGeneratorClient
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.buildTextGenerationPromptBody
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.firstResponse
@@ -14,7 +15,8 @@ import javax.inject.Inject
 class LookupLandmarkRepository @Inject constructor(
     private val landmarksClassifier: LandmarksClassifier,
     private val textGeneratorClient: TextGeneratorClient,
-    private val recognizedLandmarksDao: RecognizedLandmarksDao
+    private val imageClient: ImageClient, // todo: the name of the class image client doesnt really make sense - maybe "images client"?
+    private val recognizedLandmarksDao: RecognizedLandmarksDao,
 ) : LandmarkRepository {
 
     override suspend fun getNameAndDescriptionOfLandmark(
@@ -29,7 +31,9 @@ class LookupLandmarkRepository @Inject constructor(
         // get name of landmark
         val nameOfIdentifiedLocation = landmarksClassifier.classify(
             bitmap = bitmap,
-            rotationDegreesToMakeBitmapUpright = convertRotationDegreesToLandmarkRotation(rotationDegrees)
+            rotationDegreesToMakeBitmapUpright = convertRotationDegreesToLandmarkRotation(
+                rotationDegrees
+            )
         ).getOrThrow().first().name
         // check cache before making network call
         val landmarkEntity = recognizedLandmarksDao
@@ -102,4 +106,28 @@ class LookupLandmarkRepository @Inject constructor(
         return surfaceRotation in validRotations
     }
 
+    override suspend fun getImageUrlListForLandmark(
+        nameOfLandmark: String,
+        imageFidelity: ImageFidelity
+    ): Result<List<String>> {
+        val imageUrlListRequest = imageClient.getImagesForQuery(query = nameOfLandmark)
+        val imageUrlList = imageUrlListRequest.body()
+            ?.imageUrls
+            ?.map {
+                when (imageFidelity) {
+                    ImageFidelity.HIGH -> it.urlBuckets.full
+                    ImageFidelity.MEDIUM -> it.urlBuckets.regular
+                    ImageFidelity.LOW -> it.urlBuckets.small
+                }
+            }
+        if (imageUrlList != null) return Result.success(imageUrlList)
+        val exception =
+            Exception("An error occurred when fetching data. ${imageUrlListRequest.errorBody()}")
+        return Result.failure(exception)
+    }
+
+    /**
+     * An enum containing constants representing different image fidelity levels.
+     */
+    enum class ImageFidelity { HIGH, MEDIUM, LOW }
 }
