@@ -59,7 +59,8 @@ class LookupLandmarkRepository @Inject constructor(
 
     override suspend fun getFAQListAboutLandmark(landmarkName: String): Result<List<String>> {
         val promptBody = buildTextGenerationPromptBody(
-            systemPrompt = "List out 5 very short questions that a traveller might ask a guide about this place.",
+            systemPrompt = "List 5 very short questions with a maximum of 7 words," +
+                    " that a tourist might ask a guide about this place.",
             userPrompt = landmarkName
         )
         val questionsResponse = textGeneratorClient.generateTextForPrompt(promptBody)
