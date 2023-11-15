@@ -27,11 +27,19 @@ android {
         val properties = Properties().apply {
             load(project.rootProject.file("local.properties").inputStream())
         }
+        // open-ai api token
         val openAiApiToken = properties.getProperty("OPEN_AI_API_TOKEN")
         buildConfigField(
             type = "String",
             name = "OPEN_AI_API_TOKEN",
             value = "\"$openAiApiToken\""
+        )
+        val unsplashApiAccessKey = properties.getProperty("UNSPLASH_API_ACCESS_KEY")
+        // unsplash api access token
+        buildConfigField(
+            type = "String",
+            name = "UNSPLASH_API_ACCESS_KEY",
+            value = "\"$unsplashApiAccessKey\""
         )
     }
 
