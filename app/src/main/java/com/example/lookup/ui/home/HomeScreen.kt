@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -70,6 +71,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.lookup.ui.components.CameraPreview
 import com.example.lookup.R
 import com.example.lookup.domain.home.IdentifiedLocation
+import com.example.lookup.ui.components.ConversationMessageCard
 import com.example.lookup.ui.components.ShutterButton
 import com.example.lookup.ui.utils.BookmarkAdd
 import com.example.lookup.ui.utils.BookmarkAdded
@@ -196,75 +198,81 @@ private fun BottomSheetContent(
     currentlyLoadingSuggestionIndex: Int?,
     onSuggestionClick: (index: Int) -> Unit,
     onBookmarkIconClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    scrollState: ScrollState = rememberScrollState()
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        BottomSheetHeader(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            locationName = identifiedLocation.name,
-            isBookmarked = identifiedLocation.isBookmarked,
-            onBookmarkIconClick = onBookmarkIconClick
-        )
+    LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        item {
+            BottomSheetHeader(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                locationName = identifiedLocation.name,
+                isBookmarked = identifiedLocation.isBookmarked,
+                onBookmarkIconClick = onBookmarkIconClick
+            )
+        }
+
         // images
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(identifiedLocation.imageUrls) {
-                AsyncImage(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .clip(RoundedCornerShape(16.dp)),
-                    model = it,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
+        item {
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(identifiedLocation.imageUrls) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(200.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        model = it,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
         }
-        // Not using lazy list because very few items are expected to be in the list
 
-        IdentifiedLocationInfoCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            identifiedLocation = identifiedLocation.infoCardsContentList.first()
-        )
+        items(identifiedLocation.conversationMessages) {
+            ConversationMessageCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                conversationMessage = it
+            )
+        }
 
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp)
-        ) {
-            itemsIndexed(identifiedLocation.moreInfoSuggestions) { index, moreInfoSuggestion ->
-                SuggestionChip(
-                    onClick = { onSuggestionClick(index) },
-                    label = {
-                        if (currentlyLoadingSuggestionIndex == index) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                strokeWidth = 2.dp
+        item {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                itemsIndexed(identifiedLocation.moreInfoSuggestions) { index, moreInfoSuggestion ->
+                    SuggestionChip(
+                        onClick = { onSuggestionClick(index) },
+                        label = {
+                            if (currentlyLoadingSuggestionIndex == index) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 2.dp
+                                )
+                            }
+                            Text(
+                                modifier = Modifier.padding(16.dp),
+                                text = moreInfoSuggestion.suggestion
                             )
                         }
-                        Text(
-                            modifier = Modifier.padding(16.dp),
-                            text = moreInfoSuggestion.suggestion
-                        )
-                    }
-                )
+                    )
+                }
             }
         }
 
-        Spacer(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .padding(16.dp)
-        )
+        item {
+            Spacer(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(8.dp)
+            )
+        }
     }
 }
 
@@ -292,29 +300,6 @@ private fun BottomSheetHeader(
             onClick = onBookmarkIconClick,
             content = { Icon(imageVector = icon, contentDescription = null) }
         )
-    }
-}
-
-@Composable
-private fun IdentifiedLocationInfoCard(
-    modifier: Modifier = Modifier,
-    identifiedLocation: IdentifiedLocation.InfoCardContent
-) {
-    val bardIcon = ImageVector.vectorResource(id = R.drawable.ic_bard_logo)
-    OutlinedCard(modifier = modifier) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.Top
-        ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = bardIcon,
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
-            Text(text = identifiedLocation.content)
-        }
     }
 }
 
