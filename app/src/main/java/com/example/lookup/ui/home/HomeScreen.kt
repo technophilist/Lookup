@@ -100,13 +100,9 @@ data class IdentifiedLocation(
      * A data class representing a singular piece of information that will be displayed as a
      * card in the [HomeScreen].
      *
-     * @property title The title of card.
      * @property content The content of the card.
      */
-    data class InfoCardContent(
-        val title: String,
-        val content: String
-    )
+    data class InfoCardContent(val content: String)
 
     /**
      * A data class representing a suggestion. A suggestion is used to give an option to the user
