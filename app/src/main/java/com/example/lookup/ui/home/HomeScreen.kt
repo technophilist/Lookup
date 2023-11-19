@@ -92,7 +92,6 @@ fun HomeScreen(
         cameraController = cameraController,
         onShutterButtonClick = onShutterButtonClick,
         identifiedLocation = homeScreenUiState.identifiedLocation,
-        currentlyLoadingSuggestionIndex = homeScreenUiState.currentlyLoadingSuggestionIndex,
         isAnalyzing = homeScreenUiState.isAnalyzing,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
         onBookmarkIconClick = onBookmarkIconClick,
@@ -106,7 +105,6 @@ fun HomeScreen(
     cameraController: LifecycleCameraController,
     identifiedLocation: IdentifiedLocation?,
     isAnalyzing: Boolean,
-    currentlyLoadingSuggestionIndex: Int?,
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
     onSuggestionClick: (index: Int) -> Unit,
@@ -182,7 +180,6 @@ fun HomeScreen(
                 identifiedLocation?.let {
                     BottomSheetContent(
                         identifiedLocation = it,
-                        currentlyLoadingSuggestionIndex = currentlyLoadingSuggestionIndex,
                         onBookmarkIconClick = onBookmarkIconClick,
                         onSuggestionClick = onSuggestionClick
                     )
@@ -195,7 +192,6 @@ fun HomeScreen(
 @Composable
 private fun BottomSheetContent(
     identifiedLocation: IdentifiedLocation,
-    currentlyLoadingSuggestionIndex: Int?,
     onSuggestionClick: (index: Int) -> Unit,
     onBookmarkIconClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -250,12 +246,6 @@ private fun BottomSheetContent(
                     SuggestionChip(
                         onClick = { onSuggestionClick(index) },
                         label = {
-                            if (currentlyLoadingSuggestionIndex == index) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
-                                    strokeWidth = 2.dp
-                                )
-                            }
                             Text(
                                 modifier = Modifier.padding(16.dp),
                                 text = moreInfoSuggestion.suggestion
