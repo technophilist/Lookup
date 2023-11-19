@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -342,22 +344,18 @@ private fun IdentifiedLocationInfoCard(
     val bardIcon = ImageVector.vectorResource(id = R.drawable.ic_bard_logo)
     OutlinedCard(modifier = modifier) {
         Row(
-            modifier = Modifier.padding(top = 16.dp, start = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.Top
         ) {
             Icon(
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(24.dp),
                 imageVector = bardIcon,
                 contentDescription = null,
                 tint = Color.Unspecified
             )
-            Text(
-                text = identifiedLocation.title,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-            )
+            Text(text = identifiedLocation.content)
         }
-        Text(modifier = Modifier.padding(16.dp), text = identifiedLocation.content)
     }
 }
 
