@@ -1,4 +1,4 @@
-package com.example.lookup.domain
+package com.example.lookup.domain.home
 
 import com.example.lookup.ui.home.HomeScreen
 

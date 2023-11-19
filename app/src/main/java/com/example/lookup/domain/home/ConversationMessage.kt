@@ -1,4 +1,4 @@
-package com.example.lookup.domain
+package com.example.lookup.domain.home
 
 /**
  * Represents a single message in a conversation.
