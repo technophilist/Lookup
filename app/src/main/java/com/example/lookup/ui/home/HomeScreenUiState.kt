@@ -1,5 +1,7 @@
 package com.example.lookup.ui.home
 
+import com.example.lookup.domain.home.IdentifiedLocation
+
 /**
  * A data class that represents the current UI state of the [HomeScreen].
  *  @param identifiedLocation The location identified by the app. A null value indicates
