@@ -179,6 +179,7 @@ fun HomeScreen(
             content = {
                 identifiedLocation?.let {
                     BottomSheetContent(
+                        modifier = Modifier.fillMaxWidth(),
                         identifiedLocation = it,
                         onBookmarkIconClick = onBookmarkIconClick,
                         onSuggestionClick = onSuggestionClick
