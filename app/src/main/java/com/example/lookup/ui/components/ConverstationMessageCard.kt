@@ -53,12 +53,15 @@ fun ConversationMessageCard(
  */
 @Composable
 private fun UserMessageCard(modifier: Modifier = Modifier, content: String) {
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier)
+    ) {
         Card(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .widthIn(max = this.maxWidth / 1.2f)
-                .then(modifier),
+                .widthIn(max = this.maxWidth / 1.2f),
             content = { Text(modifier = Modifier.padding(16.dp), text = content) }
         )
     }
