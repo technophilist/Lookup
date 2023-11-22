@@ -72,6 +72,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.lookup.ui.components.CameraPreview
 import com.example.lookup.R
+import com.example.lookup.domain.home.ConversationMessage
 import com.example.lookup.domain.home.IdentifiedLocation
 import com.example.lookup.ui.components.ConversationMessageCard
 import com.example.lookup.ui.components.ShutterButton
@@ -87,13 +88,14 @@ fun HomeScreen(
     onBookmarkIconClick: () -> Unit,
     onSuggestionClick: (index: Int) -> Unit,
     onShutterButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     HomeScreen(
         modifier = modifier,
         cameraController = cameraController,
         onShutterButtonClick = onShutterButtonClick,
         identifiedLocation = homeScreenUiState.identifiedLocation,
+        conversationMessages = homeScreenUiState.conversationMessages,
         isAnalyzing = homeScreenUiState.isAnalyzing,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
         onBookmarkIconClick = onBookmarkIconClick,
@@ -106,6 +108,7 @@ fun HomeScreen(
 fun HomeScreen(
     cameraController: LifecycleCameraController,
     identifiedLocation: IdentifiedLocation?,
+    conversationMessages: List<ConversationMessage>,
     isAnalyzing: Boolean,
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
@@ -183,6 +186,7 @@ fun HomeScreen(
                     BottomSheetContent(
                         modifier = Modifier.fillMaxWidth(),
                         identifiedLocation = it,
+                        conversationMessages = conversationMessages,
                         onBookmarkIconClick = onBookmarkIconClick,
                         onSuggestionClick = onSuggestionClick
                     )
@@ -195,6 +199,7 @@ fun HomeScreen(
 @Composable
 private fun BottomSheetContent(
     identifiedLocation: IdentifiedLocation,
+    conversationMessages: List<ConversationMessage>,
     onSuggestionClick: (index: Int) -> Unit,
     onBookmarkIconClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -234,7 +239,7 @@ private fun BottomSheetContent(
             }
         }
 
-        items(identifiedLocation.conversationMessages) {
+        items(conversationMessages) {
             ConversationMessageCard(
                 modifier = Modifier
                     .fillMaxWidth()
