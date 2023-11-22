@@ -122,7 +122,7 @@ fun HomeScreen(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isCameraPermissionGranted = it }
     )
-    val bottomSheetState = rememberModalBottomSheetState()
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isBottomSheetVisible by remember(identifiedLocation) { mutableStateOf(identifiedLocation != null) }
     val analyzingAnimationComposition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(
