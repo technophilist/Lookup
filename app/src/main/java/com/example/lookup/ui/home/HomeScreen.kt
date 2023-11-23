@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,6 +49,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -215,8 +217,20 @@ private fun BottomSheetContent(
     onBookmarkIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val lazyListState = rememberLazyListState()
+    val isLastItemVisible by remember {
+        derivedStateOf {
+            lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount - 1
+        }
+    }
+    if (!isLastItemVisible) {
+        LaunchedEffect(Unit) {
+            lazyListState.animateScrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
+        }
+    }
     LazyColumn(
         modifier = modifier,
+        state = lazyListState,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = WindowInsets.navigationBars.asPaddingValues()
     ) {
@@ -298,7 +312,7 @@ private fun BottomSheetContent(
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
             ) {
                 itemsIndexed(identifiedLocation.moreInfoSuggestions) { index, moreInfoSuggestion ->
                     SuggestionChip(
