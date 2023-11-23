@@ -127,6 +127,24 @@ class LookupLandmarkRepository @Inject constructor(
         return Result.failure(exception)
     }
 
+    override suspend fun getAnswerForQueryAboutLandmark(
+        landmarkName: String,
+        query: String
+    ): Result<String> {
+        val promptBody = buildTextGenerationPromptBody(
+            systemPrompt = "You are a travel guide. Answer this question question about $landmarkName in a brief manner.",
+            userPrompt = query
+        )
+        val textGeneratorResponse = textGeneratorClient.generateTextForPrompt(promptBody)
+        if (!textGeneratorResponse.isSuccessful) {
+            var errorMessage = "An error occurred when making a request to generate text"
+            textGeneratorResponse.errorBody()?.let { errorMessage = "$errorMessage : $it" }
+            return Result.failure(Exception(errorMessage))
+        }
+        val answerToQuery = textGeneratorResponse.body()!!.firstResponse
+        return Result.success(answerToQuery)
+    }
+
     /**
      * An enum containing constants representing different image fidelity levels.
      */

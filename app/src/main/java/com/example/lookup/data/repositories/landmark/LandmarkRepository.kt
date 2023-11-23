@@ -35,10 +35,19 @@ interface LandmarkRepository {
      * @param nameOfLandmark The name of the landmark.
      * @param imageFidelity The desired [LookupLandmarkRepository.ImageFidelity] level for the
      * images in the returned list of URLs.
-     * @return A [Result] containing a list of image URLs if successful, or an exception if an error occurs.
+     * @return A [Result] containing a list of image URLs if successful, or an exception if an error
+     * occurred.
      */
     suspend fun getImageUrlListForLandmark(
         nameOfLandmark: String,
         imageFidelity: LookupLandmarkRepository.ImageFidelity = LookupLandmarkRepository.ImageFidelity.MEDIUM
     ): Result<List<String>>
+
+    /**
+     * Fetches an answer to a [query] about a landmark with the specified [landmarkName].
+     *
+     * @return A [Result] object containing the answer to the query, or an error if the answer
+     * could not be fetched.
+     */
+    suspend fun getAnswerForQueryAboutLandmark(landmarkName: String, query: String): Result<String>
 }
