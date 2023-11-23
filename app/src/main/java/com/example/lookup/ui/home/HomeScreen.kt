@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -65,7 +67,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.ImageDecoderDecoder
+import coil.request.ImageRequest
+import coil.size.Size
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -97,6 +104,7 @@ fun HomeScreen(
         identifiedLocation = homeScreenUiState.identifiedLocation,
         conversationMessages = homeScreenUiState.conversationMessages,
         isAnalyzing = homeScreenUiState.isAnalyzing,
+        isLoadingResponseForQuery = homeScreenUiState.isLoadingResponseForQuery,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
         onBookmarkIconClick = onBookmarkIconClick,
         onSuggestionClick = onSuggestionClick
@@ -110,6 +118,7 @@ fun HomeScreen(
     identifiedLocation: IdentifiedLocation?,
     conversationMessages: List<ConversationMessage>,
     isAnalyzing: Boolean,
+    isLoadingResponseForQuery: Boolean,
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
     onSuggestionClick: (index: Int) -> Unit,
@@ -187,6 +196,7 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         identifiedLocation = it,
                         conversationMessages = conversationMessages,
+                        isLoadingResponseForQuery = isLoadingResponseForQuery,
                         onBookmarkIconClick = onBookmarkIconClick,
                         onSuggestionClick = onSuggestionClick
                     )
@@ -200,6 +210,7 @@ fun HomeScreen(
 private fun BottomSheetContent(
     identifiedLocation: IdentifiedLocation,
     conversationMessages: List<ConversationMessage>,
+    isLoadingResponseForQuery: Boolean,
     onSuggestionClick: (index: Int) -> Unit,
     onBookmarkIconClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -246,6 +257,41 @@ private fun BottomSheetContent(
                     .padding(vertical = 8.dp, horizontal = 16.dp),
                 conversationMessage = it
             )
+        }
+
+        if (isLoadingResponseForQuery) {
+            item {
+                val context = LocalContext.current
+                val imageLoader = remember(context) {
+                    ImageLoader(context)
+                        .newBuilder()
+                        .components { add(ImageDecoderDecoder.Factory()) }
+                        .build()
+                }
+                val imageRequest = remember(imageLoader) {
+                    ImageRequest.Builder(context)
+                        .data(R.drawable.bard_sparkle_thinking_anim)
+                        .size(Size.ORIGINAL)
+                        .build()
+                }
+                val asyncImagePainter = rememberAsyncImagePainter(
+                    model = imageRequest,
+                    imageLoader = imageLoader
+                )
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .size(24.dp),
+                        painter = asyncImagePainter,
+                        contentDescription = null
+                    )
+                }
+            }
         }
 
         item {
