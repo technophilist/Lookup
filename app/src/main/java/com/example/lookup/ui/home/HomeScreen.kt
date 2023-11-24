@@ -42,6 +42,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -97,6 +98,7 @@ fun HomeScreen(
     onBookmarkIconClick: () -> Unit,
     onSuggestionClick: (index: Int) -> Unit,
     onShutterButtonClick: () -> Unit,
+    onBottomSheetDismissed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     HomeScreen(
@@ -109,6 +111,7 @@ fun HomeScreen(
         isLoadingResponseForQuery = homeScreenUiState.isLoadingResponseForQuery,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
         onBookmarkIconClick = onBookmarkIconClick,
+        onBottomSheetDismissed = onBottomSheetDismissed,
         onSuggestionClick = onSuggestionClick
     )
 }
@@ -125,6 +128,7 @@ fun HomeScreen(
     onBookmarkIconClick: () -> Unit,
     onSuggestionClick: (index: Int) -> Unit,
     onShutterButtonClick: () -> Unit,
+    onBottomSheetDismissed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -133,7 +137,13 @@ fun HomeScreen(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isCameraPermissionGranted = it }
     )
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = {
+            if (it == SheetValue.Hidden) onBottomSheetDismissed()
+            true
+        }
+    )
     var isBottomSheetVisible by remember(identifiedLocation) { mutableStateOf(identifiedLocation != null) }
     val analyzingAnimationComposition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(
