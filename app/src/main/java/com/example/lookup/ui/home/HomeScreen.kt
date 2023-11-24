@@ -7,11 +7,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,23 +22,20 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SuggestionChip
@@ -59,13 +54,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -244,36 +237,18 @@ private fun BottomSheetContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = WindowInsets.navigationBars.asPaddingValues()
     ) {
-        item {
-            BottomSheetHeader(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                locationName = identifiedLocation.name,
-                isBookmarked = identifiedLocation.isBookmarked,
-                onBookmarkIconClick = onBookmarkIconClick
-            )
-        }
-
+        // header
+        bottomSheetHeaderItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            locationName = identifiedLocation.name,
+            isBookmarked = identifiedLocation.isBookmarked,
+            onBookmarkIconClick = onBookmarkIconClick
+        )
         // images
-        item {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(identifiedLocation.imageUrls) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .size(200.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                        model = it,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
-        }
-
+        bottomSheetImagesRowItem(imageUrls = identifiedLocation.imageUrls)
+        // messages
         items(conversationMessages) {
             ConversationMessageCard(
                 modifier = Modifier
@@ -282,88 +257,128 @@ private fun BottomSheetContent(
                 conversationMessage = it
             )
         }
-
+        // loading animation
         if (isLoadingResponseForQuery) {
-            item {
-                val context = LocalContext.current
-                val imageLoader = remember(context) {
-                    ImageLoader(context)
-                        .newBuilder()
-                        .components { add(ImageDecoderDecoder.Factory()) }
-                        .build()
-                }
-                val imageRequest = remember(imageLoader) {
-                    ImageRequest.Builder(context)
-                        .data(R.drawable.bard_sparkle_thinking_anim)
-                        .size(Size.ORIGINAL)
-                        .build()
-                }
-                val asyncImagePainter = rememberAsyncImagePainter(
-                    model = imageRequest,
-                    imageLoader = imageLoader
-                )
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .size(24.dp),
-                        painter = asyncImagePainter,
-                        contentDescription = null
-                    )
-                }
-            }
+            bottomSheetConversationMessageResponseLoadingItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
         }
-
-        item {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
-            ) {
-                itemsIndexed(identifiedLocation.moreInfoSuggestions) { index, moreInfoSuggestion ->
-                    SuggestionChip(
-                        onClick = { onSuggestionClick(index) },
-                        label = {
-                            Text(
-                                modifier = Modifier.padding(16.dp),
-                                text = moreInfoSuggestion.suggestion
-                            )
-                        }
-                    )
-                }
-            }
-        }
+        // additional query suggestions
+        bottomSheetSuggestionsRowItem(
+            moreInfoSuggestions = identifiedLocation.moreInfoSuggestions,
+            onSuggestionClick = onSuggestionClick
+        )
     }
 }
 
-@Composable
-private fun BottomSheetHeader(
+private fun LazyListScope.bottomSheetHeaderItem(
     locationName: String,
     isBookmarked: Boolean,
     onBookmarkIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        val icon = if (isBookmarked) Icons.Rounded.BookmarkAdded else Icons.Rounded.BookmarkAdd
-        Text(
-            modifier = Modifier.weight(1f),
-            text = locationName,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.displaySmall
+    item {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val icon = if (isBookmarked) Icons.Rounded.BookmarkAdded else Icons.Rounded.BookmarkAdd
+            Text(
+                modifier = Modifier.weight(1f),
+                text = locationName,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.displaySmall
+            )
+            OutlinedIconButton(
+                onClick = onBookmarkIconClick,
+                content = { Icon(imageVector = icon, contentDescription = null) }
+            )
+        }
+    }
+}
+
+private fun LazyListScope.bottomSheetImagesRowItem(
+    imageUrls: List<String>,
+    modifier: Modifier = Modifier
+) {
+    item {
+        LazyRow(
+            modifier = modifier,
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(items = imageUrls, key = { it }) {
+                AsyncImage(
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    model = it,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+    }
+}
+
+private fun LazyListScope.bottomSheetConversationMessageResponseLoadingItem(modifier: Modifier = Modifier) {
+    item {
+        val context = LocalContext.current
+        val imageLoader = remember(context) {
+            ImageLoader(context)
+                .newBuilder()
+                .components { add(ImageDecoderDecoder.Factory()) }
+                .build()
+        }
+        val imageRequest = remember(imageLoader) {
+            ImageRequest.Builder(context)
+                .data(R.drawable.bard_sparkle_thinking_anim)
+                .size(Size.ORIGINAL)
+                .build()
+        }
+        val asyncImagePainter = rememberAsyncImagePainter(
+            model = imageRequest,
+            imageLoader = imageLoader
         )
-        OutlinedIconButton(
-            onClick = onBookmarkIconClick,
-            content = { Icon(imageVector = icon, contentDescription = null) }
-        )
+        Card(modifier = modifier) {
+            Image(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .size(24.dp),
+                painter = asyncImagePainter,
+                contentDescription = null
+            )
+        }
+    }
+}
+
+private fun LazyListScope.bottomSheetSuggestionsRowItem(
+    moreInfoSuggestions: List<IdentifiedLocation.MoreInfoSuggestion>,
+    onSuggestionClick: (index: Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    item {
+        LazyRow(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        ) {
+            itemsIndexed(moreInfoSuggestions) { index, moreInfoSuggestion ->
+                SuggestionChip(
+                    onClick = { onSuggestionClick(index) },
+                    label = {
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = moreInfoSuggestion.suggestion
+                        )
+                    }
+                )
+            }
+        }
     }
 }
 
