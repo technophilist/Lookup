@@ -48,7 +48,7 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
                 homeScreenUiState = homeScreenUiState,
                 navigateToBookmarkedLocations = { /*TODO*/ },
                 onBookmarkIconClick = { /*TODO*/ },
-                onSuggestionClick = { /*TODO*/ },
+                onSuggestionClick = homeViewModel::onQuerySuggestionClick,
                 onBottomSheetDismissed = {
                     // bind to unfreeze camera
                     cameraController.bindToLifecycle(lifecycleOwner)
