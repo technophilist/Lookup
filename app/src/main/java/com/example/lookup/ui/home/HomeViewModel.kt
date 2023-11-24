@@ -82,4 +82,55 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    // todo: error handling
+    // todo: add additional suggestions as suggestions are being removed from list
+    fun onQuerySuggestionClick(index: Int) {
+        val identifiedLocation = _homeScreenUiState.value.identifiedLocation ?: return
+        val clickedSuggestion = identifiedLocation.moreInfoSuggestions.getOrNull(index) ?: return
+        val suggestionConversationMessage = ConversationMessage(
+            role = ConversationMessage.Role.User,
+            content = clickedSuggestion.suggestion
+        )
+        viewModelScope.launch {
+            // remove suggestion from ui
+            removeSuggestionAtIndex(index)
+            // add suggestion to list of conversation messages & set loading state to true
+            _homeScreenUiState.update {
+                it.copy(
+                    isLoadingResponseForQuery = true,
+                    conversationMessages = it.conversationMessages + suggestionConversationMessage,
+                )
+            }
+            // get answer for selected query
+            val answerToQuery = landmarkRepository.getAnswerForQueryAboutLandmark(
+                landmarkName = identifiedLocation.name,
+                query = clickedSuggestion.suggestion
+            ).getOrNull() ?: return@launch // todo: error handling
+            val answerToQueryConversationMessage = ConversationMessage(
+                role = ConversationMessage.Role.Assistant,
+                content = answerToQuery
+            )
+            // add answer generated for the query to list of conversation message & set loading to false
+            _homeScreenUiState.update {
+                it.copy(
+                    isLoadingResponseForQuery = false,
+                    conversationMessages = it.conversationMessages + answerToQueryConversationMessage,
+                )
+            }
+        }
+    }
+
+    private fun removeSuggestionAtIndex(index: Int) {
+        _homeScreenUiState.update { oldHomeScreenState ->
+            if (oldHomeScreenState.identifiedLocation == null) return
+            val updatedSuggestions =
+                oldHomeScreenState.identifiedLocation.moreInfoSuggestions.toMutableList()
+                    .apply { removeAt(index) }
+            val updatedIdentifiedLocation =
+                oldHomeScreenState.identifiedLocation.copy(moreInfoSuggestions = updatedSuggestions)
+            oldHomeScreenState.copy(identifiedLocation = updatedIdentifiedLocation)
+        }
+    }
+
 }
