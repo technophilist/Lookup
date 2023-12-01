@@ -138,7 +138,8 @@ class LookupLandmarkRepository @Inject constructor(
         val textGeneratorResponse = textGeneratorClient.generateTextForPrompt(promptBody)
         if (!textGeneratorResponse.isSuccessful) {
             var errorMessage = "An error occurred when making a request to generate text"
-            textGeneratorResponse.errorBody()?.let { errorMessage = "$errorMessage : $it" }
+            textGeneratorResponse.errorBody()
+                ?.let { errorMessage = "$errorMessage : ${it.string()}" }
             return Result.failure(Exception(errorMessage))
         }
         val answerToQuery = textGeneratorResponse.body()!!.firstResponse
