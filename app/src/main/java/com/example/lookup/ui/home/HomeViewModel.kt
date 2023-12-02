@@ -90,6 +90,11 @@ class HomeViewModel @Inject constructor(
         _homeScreenUiState.update { it.copy(errorOccurredWhenAnalyzing = false) }
     }
 
+    fun onIdentifiedLocationDismissed() {
+        // reset state to prevent inconsistencies
+        _homeScreenUiState.update { HomeScreenUiState() }
+    }
+
     // todo: error handling
     // todo: add additional suggestions as suggestions are being removed from list
     fun onQuerySuggestionClick(index: Int) {
