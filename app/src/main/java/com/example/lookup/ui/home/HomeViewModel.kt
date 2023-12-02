@@ -106,7 +106,20 @@ class HomeViewModel @Inject constructor(
             val answerToQuery = landmarkRepository.getAnswerForQueryAboutLandmark(
                 landmarkName = identifiedLocation.name,
                 query = clickedSuggestion.suggestion
-            ).getOrNull() ?: return@launch // todo: error handling
+            ).getOrNull()
+            if (answerToQuery == null) {
+                val assistantErrorMessage = ConversationMessage(
+                    role = ConversationMessage.Role.Assistant,
+                    content = "Oops! Sorry, I had trouble responding. Please try again."
+                )
+                _homeScreenUiState.update {
+                    it.copy(
+                        isLoadingResponseForQuery = false,
+                        conversationMessages = it.conversationMessages + assistantErrorMessage
+                    )
+                }
+                return@launch
+            }
             val answerToQueryConversationMessage = ConversationMessage(
                 role = ConversationMessage.Role.Assistant,
                 content = answerToQuery
