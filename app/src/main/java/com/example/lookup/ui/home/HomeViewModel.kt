@@ -37,9 +37,9 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun analyzeBitmap(bitmap: Bitmap, rotationDegreesToMakeImageUpright: Int) {
-        coroutineScope {
-            _homeScreenUiState.update { it.copy(isAnalyzing = true) }
-            try {
+        try {
+            coroutineScope {
+                _homeScreenUiState.update { it.copy(isAnalyzing = true) }
                 // fetch name and description
                 val (name, description) = landmarkRepository.getNameAndDescriptionOfLandmark(
                     bitmap,
@@ -47,6 +47,9 @@ class HomeViewModel @Inject constructor(
                 ).getOrThrow()
                 // fetch some possible questions that the user might have about the landmark
                 val moreInfoSuggestions = async {
+                    // Note: Errors that happen in this, or any async blocks, will not be thrown in
+                    // each respective calls to await() because this/they is/are a child of a
+                    // coroutine scope.
                     landmarkRepository.getFAQListAboutLandmark(description)
                         .getOrThrow()
                         .map(IdentifiedLocation::MoreInfoSuggestion)
@@ -74,11 +77,11 @@ class HomeViewModel @Inject constructor(
                         conversationMessages = listOf(assistantMessageAboutLandmark)
                     )
                 }
-            } catch (exception: Exception) {
-                if (exception is CancellationException) throw exception
-                _homeScreenUiState.update {
-                    it.copy(isAnalyzing = false, errorOccurredWhenAnalyzing = true)
-                }
+            }
+        } catch (exception: Exception) {
+            if (exception is CancellationException) throw exception
+            _homeScreenUiState.update {
+                it.copy(isAnalyzing = false, errorOccurredWhenAnalyzing = true)
             }
         }
     }
