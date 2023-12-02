@@ -5,14 +5,19 @@ import com.example.lookup.data.remote.imageclient.ImageClient
 import com.example.lookup.data.remote.imageclient.ImageClientConstants
 import com.example.lookup.data.remote.languagemodels.textgenerator.TextGeneratorClient
 import com.example.lookup.data.remote.languagemodels.textgenerator.TextGeneratorClientConstants
+import com.example.lookup.data.remote.languagemodels.textgenerator.models.GeneratedTextResponse
+import com.example.lookup.data.remote.languagemodels.textgenerator.models.MessageDTO
+import com.example.lookup.data.remote.languagemodels.textgenerator.models.TextGenerationPromptBody
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import okhttp3.OkHttpClient
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.net.SocketTimeoutException
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 
@@ -21,12 +26,19 @@ import java.util.concurrent.TimeUnit
 object NetworkModule {
 
     @Provides
-    fun provideTextGeneratorClient(): TextGeneratorClient = Retrofit.Builder()
-        .baseUrl(TextGeneratorClientConstants.BASE_URL)
-        .client(textGeneratorClientOkHttpClient)
-        .addConverterFactory(MoshiConverterFactory.create())
-        .build()
-        .create(TextGeneratorClient::class.java)
+    fun provideTextGeneratorClient(): TextGeneratorClient = TextGeneratorClient {
+        Response.success(GeneratedTextResponse(UUID.randomUUID().toString(),
+            System.currentTimeMillis().toInt(),
+            List(10) {
+                GeneratedTextResponse.GeneratedResponse(
+                    MessageDTO(
+                        MessageDTO.Roles.ASSISTANT,
+                        "Stub"
+                    )
+                )
+            }
+        ))
+    }
 
     @Provides
     fun provideImageClient(): ImageClient = Retrofit.Builder()
