@@ -52,6 +52,11 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
                 onBottomSheetDismissed = {
                     // bind to unfreeze camera
                     cameraController.bindToLifecycle(lifecycleOwner)
+                },
+                onErrorDialogDismissRequested = {
+                    homeViewModel.onErrorDismissed()
+                    // bind to unfreeze camera
+                    cameraController.bindToLifecycle(lifecycleOwner)
                 }
             )
         }

@@ -86,6 +86,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onErrorDismissed() {
+        _homeScreenUiState.update { it.copy(errorOccurredWhenAnalyzing = false) }
+    }
+
     // todo: error handling
     // todo: add additional suggestions as suggestions are being removed from list
     fun onQuerySuggestionClick(index: Int) {
