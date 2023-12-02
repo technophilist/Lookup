@@ -49,6 +49,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -130,10 +131,13 @@ fun HomeScreen(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isCameraPermissionGranted = it }
     )
+    // without this, the bottom sheet will keep closing and opening whenever the
+    // value of any state is changed
+    val updatedOnBottomSheetDismissed by rememberUpdatedState(newValue = onBottomSheetDismissed)
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
         confirmValueChange = {
-            if (it == SheetValue.Hidden) onBottomSheetDismissed()
+            if (it == SheetValue.Hidden) updatedOnBottomSheetDismissed()
             true
         }
     )
