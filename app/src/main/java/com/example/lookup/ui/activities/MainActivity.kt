@@ -25,8 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            // TODO : enable dynamic colors
-            LookupTheme(enableDynamicColors = false) {
+            LookupTheme(enableDynamicColors = true) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
