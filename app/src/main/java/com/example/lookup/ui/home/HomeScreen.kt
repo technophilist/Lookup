@@ -10,6 +10,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +32,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,6 +43,7 @@ import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -63,6 +67,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import coil.ImageLoader
 import coil.compose.AsyncImage
@@ -102,6 +107,7 @@ fun HomeScreen(
         identifiedLocation = homeScreenUiState.identifiedLocation,
         conversationMessages = homeScreenUiState.conversationMessages,
         isAnalyzing = homeScreenUiState.isAnalyzing,
+        hasErrorOccurredWhenAnalyzing = homeScreenUiState.errorOccurredWhenAnalyzing,
         isLoadingResponseForQuery = homeScreenUiState.isLoadingResponseForQuery,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
         onBookmarkIconClick = onBookmarkIconClick,
@@ -117,6 +123,7 @@ fun HomeScreen(
     identifiedLocation: IdentifiedLocation?,
     conversationMessages: List<ConversationMessage>,
     isAnalyzing: Boolean,
+    hasErrorOccurredWhenAnalyzing: Boolean,
     isLoadingResponseForQuery: Boolean,
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
@@ -148,6 +155,9 @@ fun HomeScreen(
         )
     )
     val localHapticFeedback = LocalHapticFeedback.current
+    var isErrorDialogVisible by remember(hasErrorOccurredWhenAnalyzing) {
+        mutableStateOf(hasErrorOccurredWhenAnalyzing)
+    }
 
     LaunchedEffect(Unit) {
         cameraPermissionLauncher.launch(REQUIRED_CAMERA_PERMISSION)
@@ -172,7 +182,7 @@ fun HomeScreen(
             },
             actions = { TopBarActionsRow(onBookmarksButtonClick = navigateToBookmarkedLocations) }
         )
-        if (isAnalyzing) {
+        if (isAnalyzing && !hasErrorOccurredWhenAnalyzing) {
             LottieAnimation(
                 modifier = Modifier.align(Alignment.Center),
                 composition = analyzingAnimationComposition,
@@ -210,6 +220,16 @@ fun HomeScreen(
                         onSuggestionClick = onSuggestionClick
                     )
                 }
+            }
+        )
+    }
+    if (isErrorDialogVisible) {
+        AlertDialog(
+            title = { Text(text = "An error occurred") },
+            text = { Text(text = "Oops! An error occurred when trying to analyzing the image. Please try again.") },
+            onDismissRequest = { isErrorDialogVisible = false },
+            confirmButton = {
+                TextButton(onClick = { isErrorDialogVisible = false }, content = { Text("Okay") })
             }
         )
     }
