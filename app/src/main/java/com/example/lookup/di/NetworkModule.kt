@@ -26,19 +26,12 @@ import java.util.concurrent.TimeUnit
 object NetworkModule {
 
     @Provides
-    fun provideTextGeneratorClient(): TextGeneratorClient = TextGeneratorClient {
-        Response.success(GeneratedTextResponse(UUID.randomUUID().toString(),
-            System.currentTimeMillis().toInt(),
-            List(10) {
-                GeneratedTextResponse.GeneratedResponse(
-                    MessageDTO(
-                        MessageDTO.Roles.ASSISTANT,
-                        "Stub"
-                    )
-                )
-            }
-        ))
-    }
+    fun provideTextGeneratorClient(): TextGeneratorClient = Retrofit.Builder()
+        .baseUrl(TextGeneratorClientConstants.BASE_URL)
+        .client(textGeneratorClientOkHttpClient)
+        .addConverterFactory(MoshiConverterFactory.create())
+        .build()
+        .create(TextGeneratorClient::class.java)
 
     @Provides
     fun provideImageClient(): ImageClient = Retrofit.Builder()
