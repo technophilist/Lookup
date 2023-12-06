@@ -247,11 +247,11 @@ private fun BottomSheetContent(
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount - 1
         }
     }
-    if (!isLastItemVisible) {
-        LaunchedEffect(Unit) {
-            lazyListState.animateScrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
-        }
+
+    LaunchedEffect(!isLastItemVisible) {
+        lazyListState.animateScrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
     }
+
     LazyColumn(
         modifier = modifier,
         state = lazyListState,
