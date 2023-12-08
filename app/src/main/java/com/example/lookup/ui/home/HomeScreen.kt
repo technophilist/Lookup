@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -85,6 +87,7 @@ import com.example.lookup.ui.components.ShutterButton
 import com.example.lookup.ui.utils.BookmarkAdd
 import com.example.lookup.ui.utils.BookmarkAdded
 import com.example.lookup.ui.utils.Bookmarks
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -271,12 +274,19 @@ private fun BottomSheetContent(
         bottomSheetImagesRowItem(imageUrls = identifiedLocation.imageUrls)
         // messages
         items(conversationMessages) {
-            ConversationMessageCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
-                conversationMessage = it
-            )
+            var isVisible by remember { mutableStateOf(false) }
+            LaunchedEffect(Unit) {
+                delay(50)
+                isVisible = true
+            }
+            AnimatedVisibility(visible = isVisible, enter = scaleIn()) {
+                ConversationMessageCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp, horizontal = 16.dp),
+                    conversationMessage = it
+                )
+            }
         }
         // loading animation
         if (isLoadingResponseForQuery) {
@@ -348,6 +358,11 @@ private fun LazyListScope.bottomSheetImagesRowItem(
 
 private fun LazyListScope.bottomSheetConversationMessageResponseLoadingItem(modifier: Modifier = Modifier) {
     item {
+        var isVisible by remember { mutableStateOf(false) }
+        LaunchedEffect(Unit) {
+            delay(50)
+            isVisible = true
+        }
         val context = LocalContext.current
         val imageLoader = remember(context) {
             ImageLoader(context)
@@ -365,14 +380,16 @@ private fun LazyListScope.bottomSheetConversationMessageResponseLoadingItem(modi
             model = imageRequest,
             imageLoader = imageLoader
         )
-        Card(modifier = modifier) {
-            Image(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .size(24.dp),
-                painter = asyncImagePainter,
-                contentDescription = null
-            )
+        AnimatedVisibility(visible = isVisible, enter = scaleIn()) {
+            Card(modifier = modifier) {
+                Image(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .size(24.dp),
+                    painter = asyncImagePainter,
+                    contentDescription = null
+                )
+            }
         }
     }
 }
