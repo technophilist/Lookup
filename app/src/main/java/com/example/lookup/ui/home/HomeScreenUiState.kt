@@ -1,6 +1,5 @@
 package com.example.lookup.ui.home
 
-import com.example.lookup.domain.home.ConversationMessage
 import com.example.lookup.domain.home.ConversationMessageV2
 import com.example.lookup.domain.home.IdentifiedLocation
 
