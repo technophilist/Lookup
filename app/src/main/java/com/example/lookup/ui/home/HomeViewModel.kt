@@ -5,6 +5,7 @@ import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lookup.data.repositories.landmark.LandmarkRepository
+import com.example.lookup.data.repositories.landmark.getAnswerForQueryAboutLandmark
 import com.example.lookup.domain.home.ConversationMessage
 import com.example.lookup.domain.home.IdentifiedLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -110,21 +111,15 @@ class HomeViewModel @Inject constructor(
                 it.copy(conversationMessages = it.conversationMessages + suggestionConversationMessage)
             }
             // get answer for selected query
-            val answerToQuery = landmarkRepository.getAnswerForQueryAboutLandmark(
-                landmarkName = identifiedLocation.name,
-                query = clickedSuggestion.suggestion
-            ).getOrNull()
-            if (answerToQuery == null) {
-                val assistantErrorMessage = ConversationMessage.AssistantMessage(
-                    content = ConversationMessage.AssistantMessage.Content.Immediate("Oops! Sorry, I had trouble responding. Please try again.")
+            val answerToQuery = async {
+                landmarkRepository.getAnswerForQueryAboutLandmark(
+                    landmarkName = identifiedLocation.name,
+                    query = clickedSuggestion.suggestion,
+                    defaultValue = "Oops! Sorry, I had trouble responding. Please try again."
                 )
-                _homeScreenUiState.update {
-                    it.copy(conversationMessages = it.conversationMessages + assistantErrorMessage)
-                }
-                return@launch
             }
             val answerToQueryConversationMessage = ConversationMessage.AssistantMessage(
-                content = ConversationMessage.AssistantMessage.Content.Immediate(answerToQuery)
+                content = ConversationMessage.AssistantMessage.Content.DeferredContent(answerToQuery)
             )
             // add answer generated for the query to list of conversation message & set loading to false
             _homeScreenUiState.update {
