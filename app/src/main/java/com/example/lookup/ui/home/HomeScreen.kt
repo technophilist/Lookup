@@ -51,6 +51,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -250,6 +251,13 @@ private fun BottomSheetContent(
             lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount - 1
         }
     }
+    // The items{} block of the lazy composable will dispose all associated state when the lazy column
+    // decides to dispose the composable. So any associated state would essentially get reset because
+    // a new state would be created when the item comes back into view. This is a problem because
+    // the animations "applied" to the message composables would run again. To prevent this, this
+    // map is used as an auxiliary data structure that outlives the intrinsically ephemeral message
+    // composables.
+    val isMessageAnimationCompleted = remember { mutableStateMapOf<ConversationMessage, Boolean>() }
 
     LaunchedEffect(!isLastItemVisible) {
         lazyListState.animateScrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
@@ -273,18 +281,20 @@ private fun BottomSheetContent(
         // images
         bottomSheetImagesRowItem(imageUrls = identifiedLocation.imageUrls)
         // messages
-        items(conversationMessages) {
-            var isVisible by remember { mutableStateOf(false) }
+        items(conversationMessages) { conversationMessage ->
             LaunchedEffect(Unit) {
                 delay(50)
-                isVisible = true
+                isMessageAnimationCompleted[conversationMessage] = true
             }
-            AnimatedVisibility(visible = isVisible, enter = scaleIn()) {
+            AnimatedVisibility(
+                visible = isMessageAnimationCompleted[conversationMessage] ?: false,
+                enter = scaleIn()
+            ) {
                 ConversationMessageCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp, horizontal = 16.dp),
-                    conversationMessage = it
+                    conversationMessage = conversationMessage
                 )
             }
         }
