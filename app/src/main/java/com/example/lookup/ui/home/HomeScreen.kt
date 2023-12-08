@@ -80,10 +80,8 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.lookup.ui.components.CameraPreview
 import com.example.lookup.R
-import com.example.lookup.domain.home.ConversationMessage
 import com.example.lookup.domain.home.ConversationMessageV2
 import com.example.lookup.domain.home.IdentifiedLocation
-import com.example.lookup.ui.components.ConversationMessageCard
 import com.example.lookup.ui.components.ConversationMessageCardV2
 import com.example.lookup.ui.components.ShutterButton
 import com.example.lookup.ui.utils.BookmarkAdd
