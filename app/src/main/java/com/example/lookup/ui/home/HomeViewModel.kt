@@ -5,7 +5,7 @@ import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lookup.data.repositories.landmark.LandmarkRepository
-import com.example.lookup.domain.home.ConversationMessageV2
+import com.example.lookup.domain.home.ConversationMessage
 import com.example.lookup.domain.home.IdentifiedLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -59,8 +59,8 @@ class HomeViewModel @Inject constructor(
                     landmarkRepository.getImageUrlListForLandmark(name).getOrThrow()
                 }
                 // fetch the assistant description about the landmark & add it to the messages list
-                val assistantMessageAboutLandmark = ConversationMessageV2.AssistantMessage(
-                    content = ConversationMessageV2.AssistantMessage.Content.Immediate(description)
+                val assistantMessageAboutLandmark = ConversationMessage.AssistantMessage(
+                    content = ConversationMessage.AssistantMessage.Content.Immediate(description)
                 )
                 // create the identified location object based on the fetched information
                 val identifiedLocation = IdentifiedLocation(
@@ -99,7 +99,7 @@ class HomeViewModel @Inject constructor(
     fun onQuerySuggestionClick(index: Int) {
         val identifiedLocation = _homeScreenUiState.value.identifiedLocation ?: return
         val clickedSuggestion = identifiedLocation.moreInfoSuggestions.getOrNull(index) ?: return
-        val suggestionConversationMessage = ConversationMessageV2.UserMessage(
+        val suggestionConversationMessage = ConversationMessage.UserMessage(
             content = clickedSuggestion.suggestion
         )
         viewModelScope.launch {
@@ -118,8 +118,8 @@ class HomeViewModel @Inject constructor(
                 query = clickedSuggestion.suggestion
             ).getOrNull()
             if (answerToQuery == null) {
-                val assistantErrorMessage = ConversationMessageV2.AssistantMessage(
-                    content = ConversationMessageV2.AssistantMessage.Content.Immediate("Oops! Sorry, I had trouble responding. Please try again.")
+                val assistantErrorMessage = ConversationMessage.AssistantMessage(
+                    content = ConversationMessage.AssistantMessage.Content.Immediate("Oops! Sorry, I had trouble responding. Please try again.")
                 )
                 _homeScreenUiState.update {
                     it.copy(
@@ -129,8 +129,8 @@ class HomeViewModel @Inject constructor(
                 }
                 return@launch
             }
-            val answerToQueryConversationMessage = ConversationMessageV2.AssistantMessage(
-                content = ConversationMessageV2.AssistantMessage.Content.Immediate(answerToQuery)
+            val answerToQueryConversationMessage = ConversationMessage.AssistantMessage(
+                content = ConversationMessage.AssistantMessage.Content.Immediate(answerToQuery)
             )
             // add answer generated for the query to list of conversation message & set loading to false
             _homeScreenUiState.update {

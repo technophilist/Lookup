@@ -34,9 +34,9 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.lookup.R
-import com.example.lookup.domain.home.ConversationMessageV2
-import com.example.lookup.domain.home.ConversationMessageV2.UserMessage
-import com.example.lookup.domain.home.ConversationMessageV2.AssistantMessage
+import com.example.lookup.domain.home.ConversationMessage
+import com.example.lookup.domain.home.ConversationMessage.UserMessage
+import com.example.lookup.domain.home.ConversationMessage.AssistantMessage
 
 /**
  * A message card composable.
@@ -47,7 +47,7 @@ import com.example.lookup.domain.home.ConversationMessageV2.AssistantMessage
 @Composable
 fun ConversationMessageCardV2(
     modifier: Modifier = Modifier,
-    conversationMessage: ConversationMessageV2
+    conversationMessage: ConversationMessage
 ) {
     when (conversationMessage) {
         is AssistantMessage -> AssistantMessageCardV2(
@@ -55,7 +55,7 @@ fun ConversationMessageCardV2(
             assistantMessage = conversationMessage
         )
 
-        is ConversationMessageV2.UserMessage -> UserMessageCard(
+        is ConversationMessage.UserMessage -> UserMessageCard(
             modifier = modifier,
             userMessage = conversationMessage
         )
@@ -71,7 +71,7 @@ fun ConversationMessageCardV2(
 @Composable
 private fun UserMessageCard(
     modifier: Modifier = Modifier,
-    userMessage: ConversationMessageV2.UserMessage
+    userMessage: ConversationMessage.UserMessage
 ) {
     BoxWithConstraints(
         modifier = Modifier

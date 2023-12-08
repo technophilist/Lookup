@@ -8,7 +8,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,13 +26,11 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,7 +45,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -68,19 +64,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import coil.ImageLoader
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.decode.ImageDecoderDecoder
-import coil.request.ImageRequest
-import coil.size.Size
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.lookup.ui.components.CameraPreview
 import com.example.lookup.R
-import com.example.lookup.domain.home.ConversationMessageV2
+import com.example.lookup.domain.home.ConversationMessage
 import com.example.lookup.domain.home.IdentifiedLocation
 import com.example.lookup.ui.components.ConversationMessageCardV2
 import com.example.lookup.ui.components.ShutterButton
@@ -123,7 +114,7 @@ fun HomeScreen(
 fun HomeScreen(
     cameraController: LifecycleCameraController,
     identifiedLocation: IdentifiedLocation?,
-    conversationMessages: List<ConversationMessageV2>,
+    conversationMessages: List<ConversationMessage>,
     isAnalyzing: Boolean,
     hasErrorOccurredWhenAnalyzing: Boolean,
     isLoadingResponseForQuery: Boolean,
@@ -238,7 +229,7 @@ fun HomeScreen(
 @Composable
 private fun BottomSheetContent(
     identifiedLocation: IdentifiedLocation,
-    conversationMessages: List<ConversationMessageV2>,
+    conversationMessages: List<ConversationMessage>,
     isLoadingResponseForQuery: Boolean,
     onSuggestionClick: (index: Int) -> Unit,
     onBookmarkIconClick: () -> Unit,
@@ -252,7 +243,7 @@ private fun BottomSheetContent(
     // map is used as an auxiliary data structure that outlives the intrinsically ephemeral message
     // composables.
     val isMessageAnimationCompleted =
-        remember { mutableStateMapOf<ConversationMessageV2, Boolean>() }
+        remember { mutableStateMapOf<ConversationMessage, Boolean>() }
 
     Column(modifier = modifier) {
         LazyColumn(
