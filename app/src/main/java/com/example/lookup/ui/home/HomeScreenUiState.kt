@@ -1,6 +1,7 @@
 package com.example.lookup.ui.home
 
 import com.example.lookup.domain.home.ConversationMessage
+import com.example.lookup.domain.home.ConversationMessageV2
 import com.example.lookup.domain.home.IdentifiedLocation
 
 /**
@@ -13,7 +14,7 @@ import com.example.lookup.domain.home.IdentifiedLocation
  */
 data class HomeScreenUiState(
     val identifiedLocation: IdentifiedLocation? = null,
-    val conversationMessages: List<ConversationMessage> = emptyList(),
+    val conversationMessages: List<ConversationMessageV2> = emptyList(),
     val isLoadingResponseForQuery: Boolean = false,
     val isAnalyzing: Boolean = false,
     val errorOccurredWhenAnalyzing: Boolean = false

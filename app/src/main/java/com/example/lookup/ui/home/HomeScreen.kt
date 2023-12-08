@@ -81,8 +81,10 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.lookup.ui.components.CameraPreview
 import com.example.lookup.R
 import com.example.lookup.domain.home.ConversationMessage
+import com.example.lookup.domain.home.ConversationMessageV2
 import com.example.lookup.domain.home.IdentifiedLocation
 import com.example.lookup.ui.components.ConversationMessageCard
+import com.example.lookup.ui.components.ConversationMessageCardV2
 import com.example.lookup.ui.components.ShutterButton
 import com.example.lookup.ui.utils.BookmarkAdd
 import com.example.lookup.ui.utils.BookmarkAdded
@@ -123,7 +125,7 @@ fun HomeScreen(
 fun HomeScreen(
     cameraController: LifecycleCameraController,
     identifiedLocation: IdentifiedLocation?,
-    conversationMessages: List<ConversationMessage>,
+    conversationMessages: List<ConversationMessageV2>,
     isAnalyzing: Boolean,
     hasErrorOccurredWhenAnalyzing: Boolean,
     isLoadingResponseForQuery: Boolean,
@@ -238,7 +240,7 @@ fun HomeScreen(
 @Composable
 private fun BottomSheetContent(
     identifiedLocation: IdentifiedLocation,
-    conversationMessages: List<ConversationMessage>,
+    conversationMessages: List<ConversationMessageV2>,
     isLoadingResponseForQuery: Boolean,
     onSuggestionClick: (index: Int) -> Unit,
     onBookmarkIconClick: () -> Unit,
@@ -251,7 +253,8 @@ private fun BottomSheetContent(
     // the animations "applied" to the message composables would run again. To prevent this, this
     // map is used as an auxiliary data structure that outlives the intrinsically ephemeral message
     // composables.
-    val isMessageAnimationCompleted = remember { mutableStateMapOf<ConversationMessage, Boolean>() }
+    val isMessageAnimationCompleted =
+        remember { mutableStateMapOf<ConversationMessageV2, Boolean>() }
 
     Column(modifier = modifier) {
         LazyColumn(
@@ -279,21 +282,13 @@ private fun BottomSheetContent(
                     visible = isMessageAnimationCompleted[conversationMessage] ?: false,
                     enter = scaleIn()
                 ) {
-                    ConversationMessageCard(
+                    ConversationMessageCardV2(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp, horizontal = 16.dp),
                         conversationMessage = conversationMessage
                     )
                 }
-            }
-            // loading animation
-            if (isLoadingResponseForQuery) {
-                bottomSheetConversationMessageResponseLoadingItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                )
             }
         }
         BottomSheetSuggestionsRow(
@@ -350,44 +345,6 @@ private fun LazyListScope.bottomSheetImagesRowItem(
                     model = it,
                     contentDescription = null,
                     contentScale = ContentScale.Crop
-                )
-            }
-        }
-    }
-}
-
-private fun LazyListScope.bottomSheetConversationMessageResponseLoadingItem(modifier: Modifier = Modifier) {
-    item {
-        var isVisible by remember { mutableStateOf(false) }
-        LaunchedEffect(Unit) {
-            delay(50)
-            isVisible = true
-        }
-        val context = LocalContext.current
-        val imageLoader = remember(context) {
-            ImageLoader(context)
-                .newBuilder()
-                .components { add(ImageDecoderDecoder.Factory()) }
-                .build()
-        }
-        val imageRequest = remember(imageLoader) {
-            ImageRequest.Builder(context)
-                .data(R.drawable.bard_sparkle_thinking_anim)
-                .size(Size.ORIGINAL)
-                .build()
-        }
-        val asyncImagePainter = rememberAsyncImagePainter(
-            model = imageRequest,
-            imageLoader = imageLoader
-        )
-        AnimatedVisibility(visible = isVisible, enter = scaleIn()) {
-            Card(modifier = modifier) {
-                Image(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(24.dp),
-                    painter = asyncImagePainter,
-                    contentDescription = null
                 )
             }
         }
