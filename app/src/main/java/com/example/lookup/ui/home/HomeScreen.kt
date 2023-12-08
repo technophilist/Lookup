@@ -12,14 +12,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -213,7 +212,7 @@ fun HomeScreen(
             content = {
                 identifiedLocation?.let {
                     BottomSheetContent(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxSize(),
                         identifiedLocation = it,
                         conversationMessages = conversationMessages,
                         isLoadingResponseForQuery = isLoadingResponseForQuery,
@@ -245,12 +244,7 @@ private fun BottomSheetContent(
     onBookmarkIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val lazyListState = rememberLazyListState()
-    val isLastItemVisible by remember {
-        derivedStateOf {
-            lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount - 1
-        }
-    }
+
     // The items{} block of the lazy composable will dispose all associated state when the lazy column
     // decides to dispose the composable. So any associated state would essentially get reset because
     // a new state would be created when the item comes back into view. This is a problem because
@@ -259,55 +253,51 @@ private fun BottomSheetContent(
     // composables.
     val isMessageAnimationCompleted = remember { mutableStateMapOf<ConversationMessage, Boolean>() }
 
-    LaunchedEffect(!isLastItemVisible) {
-        lazyListState.animateScrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
-    }
-
-    LazyColumn(
-        modifier = modifier,
-        state = lazyListState,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = WindowInsets.navigationBars.asPaddingValues()
-    ) {
-        // header
-        bottomSheetHeaderItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            locationName = identifiedLocation.name,
-            isBookmarked = identifiedLocation.isBookmarked,
-            onBookmarkIconClick = onBookmarkIconClick
-        )
-        // images
-        bottomSheetImagesRowItem(imageUrls = identifiedLocation.imageUrls)
-        // messages
-        items(conversationMessages) { conversationMessage ->
-            LaunchedEffect(Unit) {
-                delay(50)
-                isMessageAnimationCompleted[conversationMessage] = true
+    Column(modifier = modifier) {
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // header
+            bottomSheetHeaderItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                locationName = identifiedLocation.name,
+                isBookmarked = identifiedLocation.isBookmarked,
+                onBookmarkIconClick = onBookmarkIconClick
+            )
+            // images
+            bottomSheetImagesRowItem(imageUrls = identifiedLocation.imageUrls)
+            // messages
+            items(conversationMessages) { conversationMessage ->
+                LaunchedEffect(Unit) {
+                    delay(50)
+                    isMessageAnimationCompleted[conversationMessage] = true
+                }
+                AnimatedVisibility(
+                    visible = isMessageAnimationCompleted[conversationMessage] ?: false,
+                    enter = scaleIn()
+                ) {
+                    ConversationMessageCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp, horizontal = 16.dp),
+                        conversationMessage = conversationMessage
+                    )
+                }
             }
-            AnimatedVisibility(
-                visible = isMessageAnimationCompleted[conversationMessage] ?: false,
-                enter = scaleIn()
-            ) {
-                ConversationMessageCard(
+            // loading animation
+            if (isLoadingResponseForQuery) {
+                bottomSheetConversationMessageResponseLoadingItem(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp, horizontal = 16.dp),
-                    conversationMessage = conversationMessage
+                        .padding(16.dp)
                 )
             }
         }
-        // loading animation
-        if (isLoadingResponseForQuery) {
-            bottomSheetConversationMessageResponseLoadingItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
-        }
-        // additional query suggestions
-        bottomSheetSuggestionsRowItem(
+        BottomSheetSuggestionsRow(
+            modifier = Modifier.navigationBarsPadding(),
             moreInfoSuggestions = identifiedLocation.moreInfoSuggestions,
             onSuggestionClick = onSuggestionClick
         )
@@ -404,28 +394,27 @@ private fun LazyListScope.bottomSheetConversationMessageResponseLoadingItem(modi
     }
 }
 
-private fun LazyListScope.bottomSheetSuggestionsRowItem(
+@Composable
+private fun BottomSheetSuggestionsRow(
     moreInfoSuggestions: List<IdentifiedLocation.MoreInfoSuggestion>,
     onSuggestionClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    item {
-        LazyRow(
-            modifier = modifier,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
-        ) {
-            itemsIndexed(moreInfoSuggestions) { index, moreInfoSuggestion ->
-                SuggestionChip(
-                    onClick = { onSuggestionClick(index) },
-                    label = {
-                        Text(
-                            modifier = Modifier.padding(16.dp),
-                            text = moreInfoSuggestion.suggestion
-                        )
-                    }
-                )
-            }
+    LazyRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+    ) {
+        itemsIndexed(moreInfoSuggestions) { index, moreInfoSuggestion ->
+            SuggestionChip(
+                onClick = { onSuggestionClick(index) },
+                label = {
+                    Text(
+                        modifier = Modifier.padding(16.dp),
+                        text = moreInfoSuggestion.suggestion
+                    )
+                }
+            )
         }
     }
 }
