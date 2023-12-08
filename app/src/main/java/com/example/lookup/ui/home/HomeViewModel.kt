@@ -107,10 +107,7 @@ class HomeViewModel @Inject constructor(
             removeSuggestionAtIndex(index)
             // add suggestion to list of conversation messages & set loading state to true
             _homeScreenUiState.update {
-                it.copy(
-                    isLoadingResponseForQuery = true,
-                    conversationMessages = it.conversationMessages + suggestionConversationMessage,
-                )
+                it.copy(conversationMessages = it.conversationMessages + suggestionConversationMessage)
             }
             // get answer for selected query
             val answerToQuery = landmarkRepository.getAnswerForQueryAboutLandmark(
@@ -122,10 +119,7 @@ class HomeViewModel @Inject constructor(
                     content = ConversationMessage.AssistantMessage.Content.Immediate("Oops! Sorry, I had trouble responding. Please try again.")
                 )
                 _homeScreenUiState.update {
-                    it.copy(
-                        isLoadingResponseForQuery = false,
-                        conversationMessages = it.conversationMessages + assistantErrorMessage
-                    )
+                    it.copy(conversationMessages = it.conversationMessages + assistantErrorMessage)
                 }
                 return@launch
             }
@@ -134,10 +128,7 @@ class HomeViewModel @Inject constructor(
             )
             // add answer generated for the query to list of conversation message & set loading to false
             _homeScreenUiState.update {
-                it.copy(
-                    isLoadingResponseForQuery = false,
-                    conversationMessages = it.conversationMessages + answerToQueryConversationMessage,
-                )
+                it.copy(conversationMessages = it.conversationMessages + answerToQueryConversationMessage)
             }
         }
     }

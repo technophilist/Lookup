@@ -100,7 +100,6 @@ fun HomeScreen(
         conversationMessages = homeScreenUiState.conversationMessages,
         isAnalyzing = homeScreenUiState.isAnalyzing,
         hasErrorOccurredWhenAnalyzing = homeScreenUiState.errorOccurredWhenAnalyzing,
-        isLoadingResponseForQuery = homeScreenUiState.isLoadingResponseForQuery,
         navigateToBookmarkedLocations = navigateToBookmarkedLocations,
         onBookmarkIconClick = onBookmarkIconClick,
         onBottomSheetDismissed = onBottomSheetDismissed,
@@ -117,7 +116,6 @@ fun HomeScreen(
     conversationMessages: List<ConversationMessage>,
     isAnalyzing: Boolean,
     hasErrorOccurredWhenAnalyzing: Boolean,
-    isLoadingResponseForQuery: Boolean,
     navigateToBookmarkedLocations: () -> Unit,
     onBookmarkIconClick: () -> Unit,
     onSuggestionClick: (index: Int) -> Unit,
@@ -206,7 +204,6 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxSize(),
                         identifiedLocation = it,
                         conversationMessages = conversationMessages,
-                        isLoadingResponseForQuery = isLoadingResponseForQuery,
                         onBookmarkIconClick = onBookmarkIconClick,
                         onSuggestionClick = onSuggestionClick
                     )
@@ -230,7 +227,6 @@ fun HomeScreen(
 private fun BottomSheetContent(
     identifiedLocation: IdentifiedLocation,
     conversationMessages: List<ConversationMessage>,
-    isLoadingResponseForQuery: Boolean,
     onSuggestionClick: (index: Int) -> Unit,
     onBookmarkIconClick: () -> Unit,
     modifier: Modifier = Modifier
