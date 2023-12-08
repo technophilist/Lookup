@@ -45,7 +45,7 @@ import com.example.lookup.domain.home.ConversationMessage.AssistantMessage
  * @param conversationMessage The message to display.
  */
 @Composable
-fun ConversationMessageCardV2(
+fun ConversationMessageCard(
     modifier: Modifier = Modifier,
     conversationMessage: ConversationMessage
 ) {
