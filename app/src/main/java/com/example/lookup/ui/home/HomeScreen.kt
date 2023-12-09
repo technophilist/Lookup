@@ -258,6 +258,7 @@ private fun BottomSheetContent(
             // images
             bottomSheetImagesRowItem(imageUrls = identifiedLocation.imageUrls)
             // messages
+            // todo: automatically scroll to the latest message
             items(conversationMessages) { conversationMessage ->
                 LaunchedEffect(Unit) {
                     delay(50)
