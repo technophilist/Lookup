@@ -19,3 +19,13 @@ fun BookmarkedLocationEntity.toBookmarkedLocation(): BookmarkedLocation = Bookma
     imageUrl = imageUrlString
 )
 
+/**
+ * A mapper function used to map an instance of [BookmarkedLocation] to an instance of
+ * [BookmarkedLocationEntity].
+ */
+fun BookmarkedLocation.toBookmarkedLocationEntity() = BookmarkedLocationEntity(
+    nameOfLocation = name,
+    imageUrlString = imageUrl
+)
+
+
