@@ -16,5 +16,6 @@ interface BookmarkedLocationsDao {
     @Query("DELETE FROM BookmarkedLocations WHERE nameOfLocation = :locationName")
     suspend fun deleteBookmarkedLocation(locationName: String)
 
+    @Query("SELECT * from BookmarkedLocations")
     fun getSavedBookmarksStream(): Flow<List<BookmarkedLocationEntity>>
 }
