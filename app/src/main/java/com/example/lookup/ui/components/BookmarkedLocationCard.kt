@@ -1,5 +1,7 @@
 package com.example.lookup.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -9,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -48,4 +51,26 @@ fun BookmarkedLocationCard(
             overflow = TextOverflow.Ellipsis
         )
     }
+}
+
+/**
+ * An overload of [BookmarkedLocationCard] that has [onClick] and [onLongClick] callbacks.
+ */
+@ExperimentalFoundationApi
+@Composable
+fun BookmarkedLocationCard(
+    nameOfLocation: String,
+    imageUrlOfLocation: String,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BookmarkedLocationCard(
+        modifier = modifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick
+        ),
+        nameOfLocation = nameOfLocation,
+        imageUrlOfLocation = imageUrlOfLocation
+    )
 }
