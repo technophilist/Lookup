@@ -41,6 +41,13 @@ android {
             name = "UNSPLASH_API_ACCESS_KEY",
             value = "\"$unsplashApiAccessKey\""
         )
+        // google-gemini api key
+        val geminiApiKey = properties.getProperty("GOOGLE_GEMINI_API_KEY")
+        buildConfigField(
+            type = "String",
+            name = "GOOGLE_GEMINI_API_KEY",
+            value = "\"$geminiApiKey\""
+        )
     }
 
     buildTypes {
