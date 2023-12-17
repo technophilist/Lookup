@@ -9,4 +9,5 @@ sealed class LookupDestinations(val route: String) {
      * An object representing the home screen.
      */
     object HomeScreen : LookupDestinations("lookup_home_screen")
+    object BookmarksScreen : LookupDestinations("lookup_bookmarks_screen")
 }
