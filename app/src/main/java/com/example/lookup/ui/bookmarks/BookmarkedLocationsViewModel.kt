@@ -28,9 +28,11 @@ class BookmarkedLocationsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun deleteBookmark(bookmarkedLocation: BookmarkedLocation) {
+    fun deleteBookmarks(bookmarksToBeDeleted: List<BookmarkedLocation>) {
         viewModelScope.launch {
-            bookmarksRepository.deleteLocationFromBookmarks(bookmarkedLocation)
+            bookmarksToBeDeleted.forEach {
+                bookmarksRepository.deleteLocationFromBookmarks(it)
+            }
         }
     }
 }
