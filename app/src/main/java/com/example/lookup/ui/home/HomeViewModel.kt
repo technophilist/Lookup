@@ -4,10 +4,13 @@ import android.graphics.Bitmap
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.lookup.data.repositories.bookmarks.BookmarksRepository
 import com.example.lookup.data.repositories.landmark.LandmarkRepository
 import com.example.lookup.data.repositories.landmark.getAnswerForQueryAboutLandmark
+import com.example.lookup.domain.bookmarks.BookmarkedLocation
 import com.example.lookup.domain.home.ConversationMessage
 import com.example.lookup.domain.home.IdentifiedLocation
+import com.example.lookup.ui.bookmarks.BookmarkedLocationsViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
@@ -20,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val landmarkRepository: LandmarkRepository
+    private val landmarkRepository: LandmarkRepository,
+    private val bookmarksRepository: BookmarksRepository
 ) : ViewModel() {
 
     private val _homeScreenUiState = MutableStateFlow(HomeScreenUiState())
@@ -125,6 +129,17 @@ class HomeViewModel @Inject constructor(
             _homeScreenUiState.update {
                 it.copy(conversationMessages = it.conversationMessages + answerToQueryConversationMessage)
             }
+        }
+    }
+
+    fun addLocationToBookmarks() {
+        viewModelScope.launch {
+            val bookmarkedLocation = BookmarkedLocation(
+                name = _homeScreenUiState.value.identifiedLocation?.name ?: return@launch,
+                imageUrl = _homeScreenUiState.value.identifiedLocation?.imageUrls
+                    ?.firstOrNull() ?: return@launch
+            )
+            bookmarksRepository.addLocationToBookmarks(bookmarkedLocation)
         }
     }
 
