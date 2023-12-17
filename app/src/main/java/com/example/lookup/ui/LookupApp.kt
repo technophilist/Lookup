@@ -51,7 +51,7 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
                 navigateToBookmarkedLocations = {
                     navController.navigate(LookupDestinations.BookmarksScreen.route)
                 },
-                onBookmarkIconClick = { /*TODO*/ },
+                onBookmarkIconClick = homeViewModel::addLocationToBookmarks,
                 onSuggestionClick = homeViewModel::onQuerySuggestionClick,
                 onBottomSheetDismissed = {
                     homeViewModel.onIdentifiedLocationDismissed()
