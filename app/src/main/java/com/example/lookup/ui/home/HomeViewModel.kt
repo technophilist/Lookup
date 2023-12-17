@@ -17,6 +17,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -140,6 +143,17 @@ class HomeViewModel @Inject constructor(
                     ?.firstOrNull() ?: return@launch
             )
             bookmarksRepository.addLocationToBookmarks(bookmarkedLocation)
+        }
+    }
+
+    fun removeLocationFromBookmarks() {
+        viewModelScope.launch {
+            val bookmarkedLocation = BookmarkedLocation(
+                name = _homeScreenUiState.value.identifiedLocation?.name ?: return@launch,
+                imageUrl = _homeScreenUiState.value.identifiedLocation?.imageUrls
+                    ?.firstOrNull() ?: return@launch
+            )
+            bookmarksRepository.deleteLocationFromBookmarks(bookmarkedLocation)
         }
     }
 
