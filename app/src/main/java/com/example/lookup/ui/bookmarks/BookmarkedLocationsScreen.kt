@@ -49,8 +49,8 @@ fun BookmarkedLocationsScreen(
         @Composable { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val isSelectedMap = remember { mutableStateMapOf<BookmarkedLocation, Boolean>() }
-    val isInSelectionMode by remember {
-        derivedStateOf { isSelectedMap.values.any { it == true } }
+    val isInSelectionMode by remember(bookmarkedLocations) {
+        derivedStateOf { bookmarkedLocations.any { isSelectedMap[it] == true } }
     }
     var shouldShowDeleteDialog by remember { mutableStateOf(false) }
 
@@ -123,7 +123,10 @@ fun BookmarkedLocationsScreen(
                 onDismissRequest = { shouldShowDeleteDialog = false },
                 confirmButton = {
                     TextButton(
-                        onClick = { onDeleteButtonClick(selectedItems) },
+                        onClick = {
+                            onDeleteButtonClick(selectedItems)
+                            shouldShowDeleteDialog = false
+                        },
                         content = { Text(text = "Okay") }
                     )
                 },
