@@ -46,8 +46,6 @@ fun BookmarkedLocationCard(
             modifier = Modifier.padding(8.dp),
             text = nameOfLocation,
             style = MaterialTheme.typography.titleLarge,
-            maxLines = 2,
-            minLines = 2,
             overflow = TextOverflow.Ellipsis
         )
     }
