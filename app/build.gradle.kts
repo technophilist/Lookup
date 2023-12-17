@@ -34,8 +34,8 @@ android {
             name = "OPEN_AI_API_TOKEN",
             value = "\"$openAiApiToken\""
         )
-        val unsplashApiAccessKey = properties.getProperty("UNSPLASH_API_ACCESS_KEY")
         // unsplash api access token
+        val unsplashApiAccessKey = properties.getProperty("UNSPLASH_API_ACCESS_KEY")
         buildConfigField(
             type = "String",
             name = "UNSPLASH_API_ACCESS_KEY",
@@ -134,4 +134,7 @@ dependencies {
 
     // coroutines test
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // sdk for google's gemini models
+    implementation("com.google.ai.client.generativeai:generativeai:0.1.1")
 }
