@@ -11,8 +11,8 @@ import javax.inject.Inject
 class LookupBookmarksRepository @Inject constructor(
     private val bookmarkedLocationsDao: BookmarkedLocationsDao
 ) : BookmarksRepository {
-    
-    override suspend fun getBookmarksRepositoryStream(): Flow<List<BookmarkedLocation>> {
+
+    override fun getBookmarksRepositoryStream(): Flow<List<BookmarkedLocation>> {
         return bookmarkedLocationsDao.getSavedBookmarksStream().map {
             it.map { bookmarkedLocationEntity -> bookmarkedLocationEntity.toBookmarkedLocation() }
         }

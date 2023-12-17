@@ -11,7 +11,7 @@ interface BookmarksRepository {
     /**
      * Retrieves a [Flow] of [BookmarkedLocation]s.
      */
-    suspend fun getBookmarksRepositoryStream(): Flow<List<BookmarkedLocation>>
+    fun getBookmarksRepositoryStream(): Flow<List<BookmarkedLocation>>
 
     /**
      * Adds a location to the bookmarks.
