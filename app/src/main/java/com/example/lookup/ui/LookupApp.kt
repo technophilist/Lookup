@@ -81,7 +81,7 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
             val bookmarkedLocationsList by bookmarkedLocationsViewModel.bookmarksListStream.collectAsStateWithLifecycle()
             BookmarkedLocationsScreen(
                 bookmarkedLocations = bookmarkedLocationsList,
-                onDeleteButtonClick = {/*TODO*/ },
+                onDeleteButtonClick = bookmarkedLocationsViewModel::deleteBookmarks,
                 onBackButtonClick = navController::popBackStack
             )
         }
