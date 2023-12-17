@@ -33,6 +33,21 @@ class HomeViewModel @Inject constructor(
     private val _homeScreenUiState = MutableStateFlow(HomeScreenUiState())
     val homeScreenUiState = _homeScreenUiState.asStateFlow()
 
+    init {
+        combine(
+            homeScreenUiState,
+            bookmarksRepository.getBookmarksRepositoryStream()
+        ) { uiState, bookmarkedLocations ->
+            val bookmarkedLocationNames = bookmarkedLocations.map { it.name }
+            val isBookmarkedLocation = uiState.identifiedLocation?.name in bookmarkedLocationNames
+            _homeScreenUiState.update {
+                it.copy(
+                    identifiedLocation = it.identifiedLocation?.copy(isBookmarked = isBookmarkedLocation)
+                )
+            }
+        }.launchIn(viewModelScope)
+    }
+
     fun analyzeImage(imageProxy: ImageProxy) {
         viewModelScope.launch {
             val rotationDegreesToMakeImageUpright = imageProxy.imageInfo.rotationDegrees
