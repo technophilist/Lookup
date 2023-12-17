@@ -13,6 +13,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.lookup.ui.bookmarks.BookmarkedLocationsScreen
+import com.example.lookup.ui.bookmarks.BookmarkedLocationsViewModel
 import com.example.lookup.ui.home.HomeScreen
 import com.example.lookup.ui.home.HomeViewModel
 import com.example.lookup.ui.navigation.LookupDestinations
@@ -46,7 +48,9 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
                     )
                 },
                 homeScreenUiState = homeScreenUiState,
-                navigateToBookmarkedLocations = { /*TODO*/ },
+                navigateToBookmarkedLocations = {
+                    navController.navigate(LookupDestinations.BookmarksScreen.route)
+                },
                 onBookmarkIconClick = { /*TODO*/ },
                 onSuggestionClick = homeViewModel::onQuerySuggestionClick,
                 onBottomSheetDismissed = {
@@ -59,6 +63,16 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
                     // bind to unfreeze camera
                     cameraController.bindToLifecycle(lifecycleOwner)
                 }
+            )
+        }
+
+        composable(route = LookupDestinations.BookmarksScreen.route) {
+            val bookmarkedLocationsViewModel = hiltViewModel<BookmarkedLocationsViewModel>()
+            val bookmarkedLocationsList by bookmarkedLocationsViewModel.bookmarksListStream.collectAsStateWithLifecycle()
+            BookmarkedLocationsScreen(
+                bookmarkedLocations = bookmarkedLocationsList,
+                onDeleteButtonClick = {/*TODO*/ },
+                onBackButtonClick = navController::popBackStack
             )
         }
     }
