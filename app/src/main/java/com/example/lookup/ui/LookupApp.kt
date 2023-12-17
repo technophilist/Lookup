@@ -1,5 +1,6 @@
 package com.example.lookup.ui
 
+import android.widget.Toast
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.runtime.Composable
@@ -52,11 +53,14 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
                     navController.navigate(LookupDestinations.BookmarksScreen.route)
                 },
                 onBookmarkIconClick = {
-                    if (homeScreenUiState.identifiedLocation?.isBookmarked == true) {
+                    val message = if (homeScreenUiState.identifiedLocation?.isBookmarked == true) {
                         homeViewModel.removeLocationFromBookmarks()
+                        "Removed from bookmarks"
                     } else {
                         homeViewModel.addLocationToBookmarks()
+                        "Added to bookmarks"
                     }
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 },
                 onSuggestionClick = homeViewModel::onQuerySuggestionClick,
                 onBottomSheetDismissed = {
