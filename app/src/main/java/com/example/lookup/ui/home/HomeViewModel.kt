@@ -64,7 +64,7 @@ class HomeViewModel @Inject constructor(
             coroutineScope {
                 _homeScreenUiState.update { it.copy(isAnalyzing = true) }
                 // fetch name and description
-                val (name, description) = landmarkRepository.getNameAndDescriptionOfLandmark(
+                val (landmarkName, description) = landmarkRepository.getNameAndDescriptionOfLandmark(
                     bitmap,
                     rotationDegreesToMakeImageUpright
                 ).getOrThrow()
@@ -73,13 +73,13 @@ class HomeViewModel @Inject constructor(
                     // Note: Errors that happen in this, or any async blocks, will not be thrown in
                     // each respective calls to await() because this/they is/are a child of a
                     // coroutine scope.
-                    landmarkRepository.getFAQListAboutLandmark(description)
+                    landmarkRepository.getFAQListAboutLandmark(landmarkName)
                         .getOrThrow()
                         .map(IdentifiedLocation::MoreInfoSuggestion)
                 }
                 // fetch images of the identified location
                 val images = async {
-                    landmarkRepository.getImageUrlListForLandmark(name).getOrThrow()
+                    landmarkRepository.getImageUrlListForLandmark(landmarkName).getOrThrow()
                 }
                 // fetch the assistant description about the landmark & add it to the messages list
                 val assistantMessageAboutLandmark = ConversationMessage.AssistantMessage(
@@ -87,7 +87,7 @@ class HomeViewModel @Inject constructor(
                 )
                 // create the identified location object based on the fetched information
                 val identifiedLocation = IdentifiedLocation(
-                    name = name,
+                    name = landmarkName,
                     imageUrls = images.await(),
                     moreInfoSuggestions = moreInfoSuggestions.await(),
                     isBookmarked = false
