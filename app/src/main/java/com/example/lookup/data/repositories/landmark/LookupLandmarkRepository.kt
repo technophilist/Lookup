@@ -8,13 +8,13 @@ import com.example.lookup.data.remote.imageclient.ImageClient
 import com.example.lookup.data.remote.languagemodels.textgenerator.TextGeneratorClient
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.buildTextGenerationPromptBody
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.firstResponse
+import com.example.lookup.di.GeminiClient
 import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 
-// TODO : add cache
 class LookupLandmarkRepository @Inject constructor(
     private val landmarksClassifier: LandmarksClassifier,
-    private val textGeneratorClient: TextGeneratorClient,
+    @GeminiClient private val textGeneratorClient: TextGeneratorClient,
     private val imageClient: ImageClient, // todo: the name of the class image client doesnt really make sense - maybe "images client"?
     private val recognizedLandmarksDao: RecognizedLandmarksDao,
 ) : LandmarkRepository {
