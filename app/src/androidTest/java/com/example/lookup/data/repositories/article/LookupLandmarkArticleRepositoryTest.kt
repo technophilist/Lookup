@@ -7,7 +7,8 @@ import org.junit.Test
 class LookupLandmarkArticleRepositoryTest {
 
     private val landmarkArticleRepository = LookupLandmarkArticleRepository(
-        NetworkModule.provideGeminiTextGeneratorClient()
+        NetworkModule.provideGeminiTextGeneratorClient(),
+
     )
 
     @Test

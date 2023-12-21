@@ -33,7 +33,9 @@ class LandmarkArticleDatabaseTest {
         val articleEntity = LandmarkArticleEntity(
             nameOfLocation = "Eiffel Tower",
             articleContentType = LandmarkArticleEntity.ArticleContentType.CONCISE,
-            content = "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France."
+            content = "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France.",
+            oneLinerAboutLandmark = "",
+            imageUrl = "https://picsum.photos/1920/1080"
         )
 
         dao.insertArticle(articleEntity)
@@ -48,17 +50,23 @@ class LandmarkArticleDatabaseTest {
         val articleEntity1 = LandmarkArticleEntity(
             nameOfLocation = "Eiffel Tower",
             articleContentType = LandmarkArticleEntity.ArticleContentType.CONCISE,
-            content = "..."
+            content = "...",
+            oneLinerAboutLandmark = "",
+            imageUrl = "https://picsum.photos/1920/1080"
         )
         val articleEntity1DifferentVariant = LandmarkArticleEntity(
             nameOfLocation = "Eiffel Tower",
             articleContentType = LandmarkArticleEntity.ArticleContentType.FACTUAL,
-            content = "..."
+            content = "...",
+            oneLinerAboutLandmark = "",
+            imageUrl = "https://picsum.photos/1920/1080"
         )
         val articleEntity2 = LandmarkArticleEntity(
             nameOfLocation = "Louvre Museum",
             articleContentType = LandmarkArticleEntity.ArticleContentType.DEEP_DIVE,
-            content = "..."
+            content = "...",
+            oneLinerAboutLandmark = "",
+            imageUrl = "https://picsum.photos/1920/1080"
         )
         dao.insertArticle(articleEntity1)
         dao.insertArticle(articleEntity1DifferentVariant)
@@ -75,17 +83,23 @@ class LandmarkArticleDatabaseTest {
         val articleEntity1 = LandmarkArticleEntity(
             nameOfLocation = "Eiffel Tower",
             articleContentType = LandmarkArticleEntity.ArticleContentType.CONCISE,
-            content = "..."
+            content = "...",
+            oneLinerAboutLandmark = "",
+            imageUrl = "https://picsum.photos/1920/1080"
         )
         val articleEntity2 = LandmarkArticleEntity(
             nameOfLocation = "Eiffel Tower", // Same location for both articles
             articleContentType = LandmarkArticleEntity.ArticleContentType.FACTUAL,
-            content = "..."
+            content = "...",
+            oneLinerAboutLandmark = "",
+            imageUrl = "https://picsum.photos/1920/1080"
         )
         val articleEntity3 = LandmarkArticleEntity(
             nameOfLocation = "Louvre Museum",
             articleContentType = LandmarkArticleEntity.ArticleContentType.DEEP_DIVE,
-            content = "..."
+            content = "...",
+            oneLinerAboutLandmark = "",
+            imageUrl = "https://picsum.photos/1920/1080"
         )
         dao.insertArticle(articleEntity1)
         dao.insertArticle(articleEntity2)
@@ -95,6 +109,4 @@ class LandmarkArticleDatabaseTest {
         assert(articles.size == 2)
         assert(listOf(articleEntity1, articleEntity2) == articles)
     }
-
-
 }
