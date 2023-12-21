@@ -38,9 +38,9 @@ class LandmarkArticleDatabaseTest {
 
         dao.insertArticle(articleEntity)
 
-        val allArticles = dao.getAllSavedArticles()
-        assert(allArticles.size == 1)
-        assert(articleEntity == allArticles[0])
+        val landmarkArticleEntities =
+            dao.getAllSavedArticlesForLocation(articleEntity.nameOfLocation)
+        assert(landmarkArticleEntities.all { it.nameOfLocation == articleEntity.nameOfLocation })
     }
 
     @Test
@@ -66,8 +66,34 @@ class LandmarkArticleDatabaseTest {
 
         dao.deleteArticleForLocation("Eiffel Tower")
 
-        val remainingArticles = dao.getAllSavedArticles()
-        assert(remainingArticles.none { it.nameOfLocation == "Eiffel Tower" })
+        val articleEntities = dao.getAllSavedArticlesForLocation("Eiffel Tower")
+        assert(articleEntities.isEmpty())
+    }
+
+    @Test
+    fun getAllSavedArticlesForLocationTest() = runTest {
+        val articleEntity1 = LandmarkArticleEntity(
+            nameOfLocation = "Eiffel Tower",
+            articleContentType = LandmarkArticleEntity.ArticleContentType.CONCISE,
+            content = "..."
+        )
+        val articleEntity2 = LandmarkArticleEntity(
+            nameOfLocation = "Eiffel Tower", // Same location for both articles
+            articleContentType = LandmarkArticleEntity.ArticleContentType.FACTUAL,
+            content = "..."
+        )
+        val articleEntity3 = LandmarkArticleEntity(
+            nameOfLocation = "Louvre Museum",
+            articleContentType = LandmarkArticleEntity.ArticleContentType.DEEP_DIVE,
+            content = "..."
+        )
+        dao.insertArticle(articleEntity1)
+        dao.insertArticle(articleEntity2)
+        dao.insertArticle(articleEntity3)
+
+        val articles = dao.getAllSavedArticlesForLocation("Eiffel Tower")
+        assert(articles.size == 2)
+        assert(listOf(articleEntity1, articleEntity2) == articles)
     }
 
 

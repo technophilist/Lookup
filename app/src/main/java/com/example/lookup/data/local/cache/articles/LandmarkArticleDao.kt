@@ -9,8 +9,8 @@ interface LandmarkArticleDao {
     @Insert
     suspend fun insertArticle(articleEntity: LandmarkArticleEntity)
 
-    @Query("SELECT * from LandmarkArticles")
-    suspend fun getAllSavedArticles(): List<LandmarkArticleEntity>
+    @Query("SELECT * FROM LandmarkArticles where nameOfLocation = :nameOfLocation")
+    suspend fun getAllSavedArticlesForLocation(nameOfLocation: String): List<LandmarkArticleEntity>
 
     @Query("DELETE FROM LandmarkArticles where nameOfLocation = :nameOfLocation")
     suspend fun deleteArticleForLocation(nameOfLocation: String)
