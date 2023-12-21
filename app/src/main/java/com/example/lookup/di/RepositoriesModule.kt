@@ -1,5 +1,7 @@
 package com.example.lookup.di
 
+import com.example.lookup.data.repositories.article.LandmarkArticleRepository
+import com.example.lookup.data.repositories.article.LookupLandmarkArticleRepository
 import com.example.lookup.data.repositories.bookmarks.BookmarksRepository
 import com.example.lookup.data.repositories.bookmarks.LookupBookmarksRepository
 import com.example.lookup.data.repositories.landmark.LandmarkRepository
@@ -18,4 +20,7 @@ abstract class RepositoriesModule {
 
     @Binds
     abstract fun bindBookmarksRepository(impl: LookupBookmarksRepository): BookmarksRepository
+
+    @Binds
+    abstract fun bindLandmarkArticleRepository(impl: LookupLandmarkArticleRepository): LandmarkArticleRepository
 }
