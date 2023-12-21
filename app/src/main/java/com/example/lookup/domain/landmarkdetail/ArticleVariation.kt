@@ -1,5 +1,7 @@
 package com.example.lookup.domain.landmarkdetail
 
+import com.example.lookup.data.local.cache.articles.LandmarkArticleEntity
+
 /**
  * Represents a specific variation of an article.
  *
@@ -29,3 +31,19 @@ data class ArticleVariation(val variationType: VariationType, val content: Strin
         FACTUAL("Factual (Beta)")
     }
 }
+
+
+/**
+ * Converts an instance of [LandmarkArticleEntity] to an instance of [ArticleVariation].
+ */
+fun LandmarkArticleEntity.toArticleVariation(): ArticleVariation {
+    return ArticleVariation(
+        variationType = when (this.articleContentType) {
+            LandmarkArticleEntity.ArticleContentType.CONCISE -> ArticleVariation.VariationType.CONCISE
+            LandmarkArticleEntity.ArticleContentType.DEEP_DIVE -> ArticleVariation.VariationType.DEEP_DIVE
+            LandmarkArticleEntity.ArticleContentType.FACTUAL -> ArticleVariation.VariationType.FACTUAL
+        },
+        content = this.content
+    )
+}
+
