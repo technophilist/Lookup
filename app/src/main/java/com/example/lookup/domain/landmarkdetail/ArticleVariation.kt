@@ -32,18 +32,37 @@ data class ArticleVariation(val variationType: VariationType, val content: Strin
     }
 }
 
-
 /**
- * Converts an instance of [LandmarkArticleEntity] to an instance of [ArticleVariation].
+ * Used to convert an instance of [LandmarkArticleEntity] to an instance of [ArticleVariation]
  */
 fun LandmarkArticleEntity.toArticleVariation(): ArticleVariation {
     return ArticleVariation(
-        variationType = when (this.articleContentType) {
-            LandmarkArticleEntity.ArticleContentType.CONCISE -> ArticleVariation.VariationType.CONCISE
-            LandmarkArticleEntity.ArticleContentType.DEEP_DIVE -> ArticleVariation.VariationType.DEEP_DIVE
-            LandmarkArticleEntity.ArticleContentType.FACTUAL -> ArticleVariation.VariationType.FACTUAL
-        },
+        variationType = this.articleContentType.toArticleVariationType(),
         content = this.content
     )
+}
+
+/**
+ * Converts an enum of type [LandmarkArticleEntity.ArticleContentType] to an enum of type
+ * [ArticleVariation.VariationType].
+ */
+fun LandmarkArticleEntity.ArticleContentType.toArticleVariationType(): ArticleVariation.VariationType {
+    return when (this) {
+        LandmarkArticleEntity.ArticleContentType.CONCISE -> ArticleVariation.VariationType.CONCISE
+        LandmarkArticleEntity.ArticleContentType.DEEP_DIVE -> ArticleVariation.VariationType.DEEP_DIVE
+        LandmarkArticleEntity.ArticleContentType.FACTUAL -> ArticleVariation.VariationType.FACTUAL
+    }
+}
+
+/**
+ * Converts an enum of type [ArticleVariation.VariationType]  to an enum of type
+ * [LandmarkArticleEntity.ArticleContentType]
+ */
+fun ArticleVariation.VariationType.toArticleVariationType(): LandmarkArticleEntity.ArticleContentType {
+    return when (this) {
+        ArticleVariation.VariationType.CONCISE -> LandmarkArticleEntity.ArticleContentType.CONCISE
+        ArticleVariation.VariationType.DEEP_DIVE -> LandmarkArticleEntity.ArticleContentType.DEEP_DIVE
+        ArticleVariation.VariationType.FACTUAL -> LandmarkArticleEntity.ArticleContentType.FACTUAL
+    }
 }
 
