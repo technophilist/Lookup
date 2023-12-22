@@ -1,22 +1,74 @@
 package com.example.lookup.data.repositories.article
 
+import com.example.lookup.data.local.cache.articles.LandmarkArticleDao
+import com.example.lookup.data.local.cache.articles.LandmarkArticleEntity
 import com.example.lookup.data.remote.languagemodels.textgenerator.TextGeneratorClient
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.buildTextGenerationPromptBody
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.firstResponse
 import com.example.lookup.data.utils.getBodyOrThrowException
 import com.example.lookup.domain.landmarkdetail.ArticleVariation
 import com.example.lookup.domain.landmarkdetail.LandmarkArticle
+import com.example.lookup.domain.landmarkdetail.toArticleVariation
+import com.example.lookup.domain.landmarkdetail.toArticleVariationType
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-// todo: add cache
 class LookupLandmarkArticleRepository @Inject constructor(
-    private val textGeneratorClient: TextGeneratorClient
+    private val textGeneratorClient: TextGeneratorClient,
+    private val landmarkArticleDao: LandmarkArticleDao
 ) : LandmarkArticleRepository {
-    
     override suspend fun getArticleAboutLandmark(
+        nameOfLandmark: String,
+        imageUrlOfLandmark: String,
+    ): Result<LandmarkArticle> {
+        // Check cache, if article exists in cache, return the cached result.
+        val landmarkArticleFromCache = getLandmarkArticleFromCacheIfExists(nameOfLandmark)
+        if (landmarkArticleFromCache != null) return Result.success(landmarkArticleFromCache)
+        // If not in cache, generate article and add it to cache
+        return try {
+            val article = generateArticleAboutLandmark(
+                nameOfLandmark = nameOfLandmark,
+                imageUrlOfLandmark = imageUrlOfLandmark
+            ).getOrThrow()
+            withContext(NonCancellable) {
+                // cache the generated article
+                val landmarkArticleEntities = article.availableArticleVariations.map {
+                    LandmarkArticleEntity(
+                        nameOfLocation = nameOfLandmark,
+                        oneLinerAboutLandmark = article.oneLinerAboutLandmark,
+                        imageUrl = imageUrlOfLandmark,
+                        articleContentType = it.variationType.toArticleVariationType(),
+                        content = it.content
+                    )
+                }
+                landmarkArticleEntities.forEach { landmarkArticleDao.insertArticle(it) }
+                return@withContext Result.success(article)
+            }
+        } catch (exception: Exception) {
+            if (exception is CancellationException) throw exception
+            Result.failure(exception)
+        }
+    }
+
+    private suspend fun getLandmarkArticleFromCacheIfExists(nameOfLandmark: String): LandmarkArticle? {
+        val savedArticlesForLocation =
+            landmarkArticleDao.getAllSavedArticlesForLocation(nameOfLandmark)
+        val (nameOfLocation, oneLinerAboutLandmark, imageUrl) = savedArticlesForLocation
+            .firstOrNull() ?: return null
+        val articleVariations = savedArticlesForLocation.map { it.toArticleVariation() }
+        return LandmarkArticle(
+            nameOfLandmark = nameOfLocation,
+            oneLinerAboutLandmark = oneLinerAboutLandmark,
+            imageUrl = imageUrl,
+            availableArticleVariations = articleVariations
+        )
+    }
+
+    private suspend fun generateArticleAboutLandmark(
         nameOfLandmark: String,
         imageUrlOfLandmark: String,
     ): Result<LandmarkArticle> {
