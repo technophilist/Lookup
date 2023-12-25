@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.example.lookup.data.local.bookmarks.BookmarkedLocationsDao
 import com.example.lookup.data.local.bookmarks.BookmarkedLocationsDatabase
+import com.example.lookup.data.local.cache.articles.LandmarkArticleDao
+import com.example.lookup.data.local.cache.articles.LandmarkArticleDatabase
 import com.example.lookup.data.local.cache.landmarks.RecognizedLandmarksDao
 import com.example.lookup.data.local.cache.landmarks.RecognizedLandmarksDatabase
 import dagger.Module
@@ -16,6 +18,7 @@ import javax.inject.Singleton
 
 private const val LANDMARKS_DATABASE_FILE_NAME = "recognized_landmarks.db"
 private const val BOOKMARKS_DATABASE_FILE_NAME = "saved_bookmarks.db"
+private const val ARTICLES_DATABASE_FILE_NAME = "cached_articles.db"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -38,6 +41,16 @@ object DatabaseModule {
             context,
             BookmarkedLocationsDatabase::class.java,
             BOOKMARKS_DATABASE_FILE_NAME
+        ).build().getDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLandmarkArticleDao(@ApplicationContext context: Context): LandmarkArticleDao {
+        return Room.databaseBuilder(
+            context,
+            LandmarkArticleDatabase::class.java,
+            ARTICLES_DATABASE_FILE_NAME
         ).build().getDao()
     }
 }
