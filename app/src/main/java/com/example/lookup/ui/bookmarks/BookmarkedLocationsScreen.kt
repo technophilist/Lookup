@@ -41,6 +41,7 @@ import com.example.lookup.ui.components.BookmarkedLocationCard
 @Composable
 fun BookmarkedLocationsScreen(
     bookmarkedLocations: List<BookmarkedLocation>,
+    onBookmarkedLocationClick: (BookmarkedLocation) -> Unit,
     onDeleteButtonClick: (selectedItems: List<BookmarkedLocation>) -> Unit,
     onBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -92,6 +93,7 @@ fun BookmarkedLocationsScreen(
                     nameOfLocation = it.name,
                     imageUrlOfLocation = it.imageUrl,
                     onClick = {
+                        onBookmarkedLocationClick(it)
                         if (isInSelectionMode) {
                             isSelectedMap[it] = !isSelectedMap.getOrPut(it) { false }
                         }
