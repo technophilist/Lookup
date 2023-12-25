@@ -6,6 +6,7 @@ import com.example.lookup.data.remote.languagemodels.textgenerator.TextGenerator
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.buildTextGenerationPromptBody
 import com.example.lookup.data.remote.languagemodels.textgenerator.models.firstResponse
 import com.example.lookup.data.utils.getBodyOrThrowException
+import com.example.lookup.di.GeminiClient
 import com.example.lookup.domain.landmarkdetail.ArticleVariation
 import com.example.lookup.domain.landmarkdetail.LandmarkArticle
 import com.example.lookup.domain.landmarkdetail.toArticleVariation
@@ -18,7 +19,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LookupLandmarkArticleRepository @Inject constructor(
-    private val textGeneratorClient: TextGeneratorClient,
+    @GeminiClient private val textGeneratorClient: TextGeneratorClient,
     private val landmarkArticleDao: LandmarkArticleDao
 ) : LandmarkArticleRepository {
     override suspend fun getArticleAboutLandmark(
