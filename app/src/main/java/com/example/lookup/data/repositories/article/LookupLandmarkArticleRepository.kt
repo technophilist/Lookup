@@ -45,7 +45,7 @@ class LookupLandmarkArticleRepository @Inject constructor(
                         content = it.content
                     )
                 }
-                landmarkArticleEntities.forEach { landmarkArticleDao.insertArticle(it) }
+                landmarkArticleDao.insertArticles(landmarkArticleEntities)
                 return@withContext Result.success(article)
             }
         } catch (exception: Exception) {
