@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import kotlin.time.Duration.Companion.seconds
 
 class LookupLandmarkArticleRepositoryTest {
 
@@ -35,12 +36,13 @@ class LookupLandmarkArticleRepositoryTest {
     }
 
     @Test
-    fun getArticleTest_validLandmarkDetails_articleIsSuccessfullyFetched() = runTest {
-        val article = landmarkArticleRepository.getArticleAboutLandmark(
-            nameOfLandmark = "Washington Monument",
-            imageUrlOfLandmark = "https://picsum.photos/1920/1080"
-        ).getOrNull()
-        assert(article != null)
-        println(article)
-    }
+    fun getArticleTest_validLandmarkDetails_articleIsSuccessfullyFetched() =
+        runTest(timeout = 20.seconds) {
+            val article = landmarkArticleRepository.getArticleAboutLandmark(
+                nameOfLandmark = "Washington Monument",
+                imageUrlOfLandmark = "https://picsum.photos/1920/1080"
+            ).getOrNull()
+            assert(article != null)
+            println(article)
+        }
 }
