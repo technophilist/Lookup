@@ -38,8 +38,7 @@ class LandmarkArticleDatabaseTest {
             imageUrl = "https://picsum.photos/1920/1080"
         )
 
-        dao.insertArticle(articleEntity)
-
+        dao.insertArticles(listOf(articleEntity))
         val landmarkArticleEntities =
             dao.getAllSavedArticlesForLocation(articleEntity.nameOfLocation)
         assert(landmarkArticleEntities.all { it.nameOfLocation == articleEntity.nameOfLocation })
@@ -68,10 +67,9 @@ class LandmarkArticleDatabaseTest {
             oneLinerAboutLandmark = "",
             imageUrl = "https://picsum.photos/1920/1080"
         )
-        dao.insertArticle(articleEntity1)
-        dao.insertArticle(articleEntity1DifferentVariant)
-        dao.insertArticle(articleEntity2)
-
+        dao.insertArticles(listOf(articleEntity1))
+        dao.insertArticles(listOf(articleEntity1DifferentVariant))
+        dao.insertArticles(listOf(articleEntity2))
         dao.deleteArticleForLocation("Eiffel Tower")
 
         val articleEntities = dao.getAllSavedArticlesForLocation("Eiffel Tower")
@@ -101,9 +99,9 @@ class LandmarkArticleDatabaseTest {
             oneLinerAboutLandmark = "",
             imageUrl = "https://picsum.photos/1920/1080"
         )
-        dao.insertArticle(articleEntity1)
-        dao.insertArticle(articleEntity2)
-        dao.insertArticle(articleEntity3)
+        dao.insertArticles(listOf(articleEntity1))
+        dao.insertArticles(listOf(articleEntity2))
+        dao.insertArticles(listOf(articleEntity3))
 
         val articles = dao.getAllSavedArticlesForLocation("Eiffel Tower")
         assert(articles.size == 2)

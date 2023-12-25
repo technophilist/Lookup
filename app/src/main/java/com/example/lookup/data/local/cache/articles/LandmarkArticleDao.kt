@@ -8,9 +8,6 @@ import androidx.room.Transaction
 @Dao
 interface LandmarkArticleDao {
     @Insert
-    suspend fun insertArticle(articleEntity: LandmarkArticleEntity)
-
-    @Insert
     suspend fun insertArticles(articleEntities: List<LandmarkArticleEntity>)
 
     @Query("SELECT * FROM LandmarkArticles where nameOfLocation = :nameOfLocation")
