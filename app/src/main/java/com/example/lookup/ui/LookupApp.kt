@@ -18,6 +18,8 @@ import com.example.lookup.ui.bookmarks.BookmarkedLocationsScreen
 import com.example.lookup.ui.bookmarks.BookmarkedLocationsViewModel
 import com.example.lookup.ui.home.HomeScreen
 import com.example.lookup.ui.home.HomeViewModel
+import com.example.lookup.ui.landmarkdetail.LandmarkDetailScreen
+import com.example.lookup.ui.landmarkdetail.LandmarkDetailViewModel
 import com.example.lookup.ui.navigation.LookupDestinations
 import com.example.lookup.ui.utils.takePicture
 
@@ -81,9 +83,27 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
             val bookmarkedLocationsList by bookmarkedLocationsViewModel.bookmarksListStream.collectAsStateWithLifecycle()
             BookmarkedLocationsScreen(
                 bookmarkedLocations = bookmarkedLocationsList,
-                onBookmarkedLocationClick = {/*TODO*/ },
+                onBookmarkedLocationClick = {
+                    navController.navigate(
+                        LookupDestinations.LandmarkDetailScreen.buildRoute(
+                            nameOfLandmark = it.name,
+                            imageUrl = it.imageUrl
+                        )
+                    )
+                },
                 onDeleteButtonClick = bookmarkedLocationsViewModel::deleteBookmarks,
                 onBackButtonClick = navController::popBackStack
+            )
+        }
+
+        composable(route = LookupDestinations.LandmarkDetailScreen.route) {
+            val viewModel = hiltViewModel<LandmarkDetailViewModel>()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            LandmarkDetailScreen(
+                uiState = uiState,
+                onVariationClick = viewModel::changeArticleVariation,
+                onRetryButtonClick = viewModel::retryLoadingArticle,
+                onBackButtonClick = { navController.popBackStack() }
             )
         }
     }
