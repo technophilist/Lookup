@@ -47,6 +47,7 @@ import com.example.lookup.domain.landmarkdetail.LandmarkArticle
 fun LandmarkDetailScreen(
     uiState: LandmarkDetailScreenUiState,
     onVariationClick: (ArticleVariation) -> Unit,
+    onRetryButtonClick: () -> Unit,
     onBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -68,6 +69,7 @@ fun LandmarkDetailScreen(
 
         is LandmarkDetailScreenUiState.Error -> ErrorScreen(
             modifier = modifier,
+            onRetryButtonClick = onRetryButtonClick,
             onBackButtonClick = onBackButtonClick
         )
     }
@@ -94,7 +96,11 @@ private fun LoadingScreen(modifier: Modifier = Modifier, onBackButtonClick: () -
 }
 
 @Composable
-private fun ErrorScreen(modifier: Modifier = Modifier, onBackButtonClick: () -> Unit) {
+private fun ErrorScreen(
+    onRetryButtonClick: () -> Unit,
+    onBackButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -108,12 +114,18 @@ private fun ErrorScreen(modifier: Modifier = Modifier, onBackButtonClick: () -> 
                 onClick = onBackButtonClick,
                 content = { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null) }
             )
-            Column(modifier = Modifier.align(Alignment.Center)) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 Text(
                     text = "Oops! An error occurred when loading the article. Please try again."
                 )
                 OutlinedButton(
-                    onClick = { /*TODO*/ },
+                    onClick = onRetryButtonClick,
                     content = { Text(text = "Retry") }
                 )
             }
