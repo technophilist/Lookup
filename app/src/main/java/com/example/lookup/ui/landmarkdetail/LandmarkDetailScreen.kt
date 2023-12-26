@@ -50,23 +50,12 @@ fun LandmarkDetailScreen(
     onBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when(uiState){
-        is LandmarkDetailScreenUiState.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .then(modifier),
-                contentAlignment = Alignment.Center,
-                content = {
-                    IconButton(
-                        modifier = Modifier.statusBarsPadding().align(Alignment.TopStart),
-                        onClick = onBackButtonClick,
-                        content = { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null) }
-                    )
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-            )
-        }
+    when (uiState) {
+        is LandmarkDetailScreenUiState.Loading -> LoadingScreen(
+            modifier = modifier,
+            onBackButtonClick = onBackButtonClick
+        )
+
         is LandmarkDetailScreenUiState.ArticleLoaded -> {
             LandmarkDetailScreen(
                 modifier = modifier,
@@ -76,8 +65,60 @@ fun LandmarkDetailScreen(
                 onBackButtonClick = onBackButtonClick
             )
         }
-        is LandmarkDetailScreenUiState.Error -> TODO()
+
+        is LandmarkDetailScreenUiState.Error -> ErrorScreen(
+            modifier = modifier,
+            onBackButtonClick = onBackButtonClick
+        )
     }
+}
+
+@Composable
+private fun LoadingScreen(modifier: Modifier = Modifier, onBackButtonClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .then(modifier),
+        contentAlignment = Alignment.Center,
+        content = {
+            IconButton(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .align(Alignment.TopStart),
+                onClick = onBackButtonClick,
+                content = { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null) }
+            )
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+    )
+}
+
+@Composable
+private fun ErrorScreen(modifier: Modifier = Modifier, onBackButtonClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .then(modifier),
+        contentAlignment = Alignment.Center,
+        content = {
+            IconButton(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .align(Alignment.TopStart),
+                onClick = onBackButtonClick,
+                content = { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null) }
+            )
+            Column(modifier = Modifier.align(Alignment.Center)) {
+                Text(
+                    text = "Oops! An error occurred when loading the article. Please try again."
+                )
+                OutlinedButton(
+                    onClick = { /*TODO*/ },
+                    content = { Text(text = "Retry") }
+                )
+            }
+        }
+    )
 }
 
 @Composable
