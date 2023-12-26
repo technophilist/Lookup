@@ -26,6 +26,7 @@ instantly recognize it and generate fascinating descriptions, answer your questi
 ## Remote API's / Client SDK's
 - [Gemini Client SDK](https://ai.google.dev/tutorials/android_quickstart) 
 - [OpenAI API](https://openai.com/blog/openai-api)
+- [Unsplash API](https://unsplash.com/developers)
 
 ## Source code, Architecture, & Testing
 - Uses multi-repository pattern.
