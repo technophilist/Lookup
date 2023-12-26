@@ -1,4 +1,4 @@
-# Lookup - A fully AI powered Landmarks Recoginition App
+# Lookup - A fully AI powered Landmarks Recognition App
 ![Banner Image](images/app_banner_image.png)
 <p align = "center">
 <a href="https://www.repostatus.org/#wip"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release    suitable for the public." /></a>
