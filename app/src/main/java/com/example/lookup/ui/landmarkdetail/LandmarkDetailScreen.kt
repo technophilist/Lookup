@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -42,8 +42,46 @@ import com.example.lookup.R
 import com.example.lookup.domain.landmarkdetail.ArticleVariation
 import com.example.lookup.domain.landmarkdetail.LandmarkArticle
 
+
 @Composable
 fun LandmarkDetailScreen(
+    uiState: LandmarkDetailScreenUiState,
+    onVariationClick: (ArticleVariation) -> Unit,
+    onBackButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when(uiState){
+        is LandmarkDetailScreenUiState.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(modifier),
+                contentAlignment = Alignment.Center,
+                content = {
+                    IconButton(
+                        modifier = Modifier.statusBarsPadding().align(Alignment.TopStart),
+                        onClick = onBackButtonClick,
+                        content = { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null) }
+                    )
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            )
+        }
+        is LandmarkDetailScreenUiState.ArticleLoaded -> {
+            LandmarkDetailScreen(
+                modifier = modifier,
+                article = uiState.landmarkArticle,
+                currentlySelectedArticleVariation = uiState.currentlySelectedArticleVariation,
+                onVariationClick = onVariationClick,
+                onBackButtonClick = onBackButtonClick
+            )
+        }
+        is LandmarkDetailScreenUiState.Error -> TODO()
+    }
+}
+
+@Composable
+private fun LandmarkDetailScreen(
     article: LandmarkArticle,
     currentlySelectedArticleVariation: ArticleVariation,
     onVariationClick: (ArticleVariation) -> Unit,
