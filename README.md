@@ -22,6 +22,8 @@ instantly recognize it and generate fascinating descriptions, answer your questi
 - [Retrofit](https://square.github.io/retrofit/) for communicating with the OpenAI API.
 - [Room](https://developer.android.com/training/data-storage/room) for database.
 - Moshi + Moshi Kotlin CodeGen for deserializing responses from the API.
+- Uses [Kotlin Gradle DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html).
+
 
 ## Remote API's / Client SDK's
 - [Gemini Client SDK](https://ai.google.dev/tutorials/android_quickstart) 
