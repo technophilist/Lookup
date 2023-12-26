@@ -1,4 +1,8 @@
 # Lookup - A fully AI powered Landmarks Recoginition App
+![Banner Image](images/app_banner_image.png)
+<p align = "center">
+<a href="https://www.repostatus.org/#wip"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release    suitable for the public." /></a>
+</p>
 
 Lookup is a fully AI powered Android app that lets you explore the world's wonders in a whole new way! Simply take a photo of a famous monument, and the app will
 instantly recognize it and generate fascinating descriptions, answer your questions, and even write unique articles with your preferred writing tone about the place. 
@@ -22,8 +26,6 @@ instantly recognize it and generate fascinating descriptions, answer your questi
 ## Remote API's / Client SDK's
 - [Gemini Client SDK](https://ai.google.dev/tutorials/android_quickstart) 
 - [OpenAI API](https://openai.com/blog/openai-api)
-
-## Notable Features
 
 ## Source code, Architecture, & Testing
 - Uses multi-repository pattern.
