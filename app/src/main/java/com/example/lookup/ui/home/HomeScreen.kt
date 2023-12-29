@@ -73,8 +73,9 @@ import com.example.lookup.ui.components.CameraPreview
 import com.example.lookup.R
 import com.example.lookup.domain.home.ConversationMessage
 import com.example.lookup.domain.home.IdentifiedLocation
-import com.example.lookup.ui.components.ConversationMessageCard
+import com.example.lookup.ui.components.AssistantMessageCard
 import com.example.lookup.ui.components.ShutterButton
+import com.example.lookup.ui.components.UserMessageCard
 import com.example.lookup.ui.utils.BookmarkAdd
 import com.example.lookup.ui.utils.BookmarkAdded
 import com.example.lookup.ui.utils.Bookmarks
@@ -241,6 +242,14 @@ private fun BottomSheetContent(
     val isMessageAnimationCompleted =
         remember { mutableStateMapOf<ConversationMessage, Boolean>() }
 
+    // Assistant messages very often take some time to generate. While the result is being
+    // generated, there wont be any text for the message card composables to render.
+    // Once a message is ready, this state map could as a way to indicate to compose that
+    // the message is ready.
+    val assistantMessageMap = remember {
+        mutableStateMapOf<ConversationMessage.AssistantMessage, String>()
+    }
+
     Column(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -258,30 +267,54 @@ private fun BottomSheetContent(
             // images
             bottomSheetImagesRowItem(imageUrls = identifiedLocation.imageUrls)
             // messages
-            // todo: automatically scroll to the latest message
-            items(conversationMessages) { conversationMessage ->
-                LaunchedEffect(Unit) {
+            conversationMessages(
+                conversationMessages = conversationMessages,
+                isMessageAnimationCompletedMap = isMessageAnimationCompleted,
+                assistantMessageMap = assistantMessageMap,
+                itemSuspendEffectHandlerBlock = { conversationMessage ->
                     delay(50)
                     isMessageAnimationCompleted[conversationMessage] = true
+                    if (conversationMessage !is ConversationMessage.AssistantMessage) return@conversationMessages
+                    assistantMessageMap[conversationMessage] = when (conversationMessage.content) {
+                        is ConversationMessage.AssistantMessage.Content.DeferredContent -> conversationMessage.content.deferredContent.await()
+                        is ConversationMessage.AssistantMessage.Content.Immediate -> conversationMessage.content.immediateContent
+                    }
                 }
-                AnimatedVisibility(
-                    visible = isMessageAnimationCompleted[conversationMessage] ?: false,
-                    enter = scaleIn()
-                ) {
-                    ConversationMessageCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 16.dp),
-                        conversationMessage = conversationMessage
-                    )
-                }
-            }
+            )
         }
         BottomSheetSuggestionsRow(
             modifier = Modifier.navigationBarsPadding(),
             moreInfoSuggestions = identifiedLocation.moreInfoSuggestions,
             onSuggestionClick = onSuggestionClick
         )
+    }
+}
+
+private fun LazyListScope.conversationMessages(
+    conversationMessages: List<ConversationMessage>,
+    isMessageAnimationCompletedMap: Map<ConversationMessage, Boolean>,
+    assistantMessageMap: Map<ConversationMessage.AssistantMessage, String>,
+    itemSuspendEffectHandlerBlock: suspend (ConversationMessage) -> Unit
+) {
+    // todo: automatically scroll to the latest message
+    items(conversationMessages) { conversationMessage ->
+        LaunchedEffect(Unit) { itemSuspendEffectHandlerBlock(conversationMessage) }
+        AnimatedVisibility(
+            visible = isMessageAnimationCompletedMap[conversationMessage] ?: false,
+            enter = scaleIn()
+        ) {
+            when (conversationMessage) {
+                is ConversationMessage.AssistantMessage -> AssistantMessageCard(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    message = assistantMessageMap[conversationMessage]
+                )
+
+                is ConversationMessage.UserMessage -> UserMessageCard(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    message = conversationMessage.content
+                )
+            }
+        }
     }
 }
 
