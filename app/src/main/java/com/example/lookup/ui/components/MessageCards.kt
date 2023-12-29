@@ -1,5 +1,6 @@
 package com.example.lookup.ui.components
 
+import android.os.Build.VERSION
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -26,6 +27,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
+import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
@@ -65,7 +67,10 @@ fun AssistantMessageCard(modifier: Modifier = Modifier, message: String?) {
     val imageLoader = remember(context) {
         ImageLoader(context)
             .newBuilder()
-            .components { add(ImageDecoderDecoder.Factory()) } // todo
+            .components {
+                if (VERSION.SDK_INT >= 28) add(ImageDecoderDecoder.Factory())
+                else add(GifDecoder.Factory())
+            }
             .build()
     }
     val imageRequest = remember(imageLoader) {
