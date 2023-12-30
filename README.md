@@ -10,7 +10,7 @@ instantly recognize it and generate fascinating descriptions, answer your questi
 ## Screenshots
 <img src = "images/screenshots/home_screen.png" width = "270" height = "600" /> &nbsp; <img src = "images/screenshots/bottom_sheet.png" width = "270" height = "600" /> &nbsp; <img src = "images/screenshots/bookmarked_locations_screen.png" width = "270" height = "600" /> 
 
-<img src = "images/screenshots/article_variations_drop_down.png" width = "270" height = "600" /> &nbsp; <img src = "images/screenshots/landmark_detail_screen.png" width = "270" height = "600" />
+ <img src = "images/screenshots/delete_dialog.png" width = "270" height = "600" /> <img src = "images/screenshots/article_variations_drop_down.png" width = "270" height = "600" /> &nbsp; <img src = "images/screenshots/landmark_detail_screen.png" width = "270" height = "600" />
 
 ## Tech Stack
 - Entirely written in [Kotlin](https://kotlinlang.org/).
