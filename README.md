@@ -7,6 +7,12 @@
 Lookup is a fully AI powered Android app that lets you explore the world's wonders in a whole new way! Simply take a photo of a famous monument, and the app will
 instantly recognize it and generate fascinating descriptions, answer your questions, and even write unique articles with your preferred writing tone about the place. 
 
+## Table of Contents
+1. [Screenshots](#screenshots)
+2. [Tech Stack](#tech-stack)
+3. [Remote API's / Client SDK's](#remote-apis--client-sdks)
+4. [Source code, Architecture, & Testing](#source-code-architecture--testing)
+
 ## Screenshots
 <img src = "images/screenshots/home_screen.png" width = "270" height = "600" /> <img src = "images/screenshots/bottom_sheet.png" width = "270" height = "600" /> <img src = "images/screenshots/bookmarked_locations_screen.png" width = "270" height = "600" /> 
 
