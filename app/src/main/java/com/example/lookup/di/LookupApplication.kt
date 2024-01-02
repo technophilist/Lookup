@@ -10,7 +10,10 @@ import javax.inject.Inject
 class LookupApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var hiltWorkerFactory: HiltWorkerFactory
-    override val workManagerConfiguration: Configuration = Configuration.Builder()
-        .setWorkerFactory(hiltWorkerFactory)
-        .build()
+
+    override val workManagerConfiguration: Configuration by lazy {
+        Configuration.Builder()
+            .setWorkerFactory(hiltWorkerFactory)
+            .build()
+    }
 }
