@@ -1,16 +1,26 @@
 package com.example.lookup.ui.home
 
+import android.app.Application
 import android.graphics.Bitmap
 import androidx.camera.core.ImageProxy
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
 import com.example.lookup.data.repositories.bookmarks.BookmarksRepository
 import com.example.lookup.data.repositories.landmark.LandmarkRepository
 import com.example.lookup.data.repositories.landmark.getAnswerForQueryAboutLandmark
+import com.example.lookup.di.LookupApplication
 import com.example.lookup.domain.bookmarks.BookmarkedLocation
 import com.example.lookup.domain.home.ConversationMessage
 import com.example.lookup.domain.home.IdentifiedLocation
-import com.example.lookup.ui.bookmarks.BookmarkedLocationsViewModel
+import com.example.lookup.domain.utils.enqueuePrefetchArticleWorkerForLocation
+import com.example.lookup.workers.PrefetchArticleWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
@@ -19,7 +29,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,8 +36,9 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val landmarkRepository: LandmarkRepository,
-    private val bookmarksRepository: BookmarksRepository
-) : ViewModel() {
+    private val bookmarksRepository: BookmarksRepository,
+    application: Application,
+) : AndroidViewModel(application) {
 
     private val _homeScreenUiState = MutableStateFlow(HomeScreenUiState())
     val homeScreenUiState = _homeScreenUiState.asStateFlow()
@@ -152,13 +162,26 @@ class HomeViewModel @Inject constructor(
 
     fun addLocationToBookmarks() {
         viewModelScope.launch {
+            val nameOfLocation = _homeScreenUiState.value.identifiedLocation?.name ?: return@launch
+            val imageUrlOfLocation = _homeScreenUiState.value.identifiedLocation?.imageUrls
+                ?.firstOrNull() ?: return@launch
+
             val bookmarkedLocation = BookmarkedLocation(
-                name = _homeScreenUiState.value.identifiedLocation?.name ?: return@launch,
-                imageUrl = _homeScreenUiState.value.identifiedLocation?.imageUrls
-                    ?.firstOrNull() ?: return@launch
+                name = nameOfLocation,
+                imageUrl = imageUrlOfLocation
             )
+            // add location to bookmarks
             bookmarksRepository.addLocationToBookmarks(bookmarkedLocation)
+            // launch prefetch article worker
+            launchPrefetchArticleWorker(nameOfLocation, imageUrlOfLocation)
         }
+    }
+
+    private fun launchPrefetchArticleWorker(nameOfLocation: String, imageUrlOfLocation: String) {
+        val context = getApplication<LookupApplication>().applicationContext
+        WorkManager
+            .getInstance(context)
+            .enqueuePrefetchArticleWorkerForLocation(nameOfLocation, imageUrlOfLocation)
     }
 
     fun removeLocationFromBookmarks() {
