@@ -33,10 +33,14 @@ class PrefetchArticleWorker @AssistedInject constructor(
     private val articleRepository: LandmarkArticleRepository
 ) : CoroutineWorker(appContext = context, params = workerParameters) {
     override suspend fun doWork(): Result {
+        // get the arguments passed to the worker
         val nameOfLandmark =
             inputData.getString(INPUT_DATA_NAME_OF_LANDMARK) ?: return Result.failure()
         val imageUrlOfLandmark =
             inputData.getString(INPUT_DATA_IMAGE_URL) ?: return Result.failure()
+        // If articles have already been generated & cached, don't do anything.
+        val cachedArticles = landmarkArticleDao.getAllSavedArticlesForLocation(nameOfLandmark)
+        if (cachedArticles.isNotEmpty()) return Result.success()
         val article = articleRepository
             .getArticleAboutLandmark(nameOfLandmark, imageUrlOfLandmark)
             .getOrNull() ?: return Result.failure()
