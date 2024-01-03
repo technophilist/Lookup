@@ -29,6 +29,7 @@ instantly recognize it and generate fascinating descriptions, answer your questi
 - [Lottie compose](https://github.com/airbnb/lottie/blob/master/android-compose.md) for displaying animations.
 - [Kotlin Coroutines](https://kotlinlang.org/docs/reference/coroutines/coroutines-guide.html) for threading.
 - [Kotlin Flows](https://developer.android.com/kotlin/flow) for creating reactive streams.
+- [Work Manager](https://developer.android.com/topic/libraries/architecture/workmanager?gclid=EAIaIQobChMIwJy33ufG8QIVGcEWBR31Mwa-EAAYASAAEgIF3vD_BwE&gclsrc=aw.ds) for persistent long-running background tasks.
 - [Retrofit](https://square.github.io/retrofit/) for communicating with the OpenAI API.
 - [Room](https://developer.android.com/training/data-storage/room) for database.
 - Moshi + Moshi Kotlin CodeGen for deserializing responses from the API.
