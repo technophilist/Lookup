@@ -52,7 +52,9 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
                 },
                 homeScreenUiState = homeScreenUiState,
                 navigateToBookmarkedLocations = {
-                    navController.navigate(LookupDestinations.BookmarksScreen.route)
+                    navController.navigate(LookupDestinations.BookmarksScreen.route) {
+                        launchSingleTop = true
+                    }
                 },
                 onBookmarkIconClick = {
                     val message = if (homeScreenUiState.identifiedLocation?.isBookmarked == true) {
@@ -89,7 +91,7 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
                             nameOfLandmark = it.name,
                             imageUrl = it.imageUrl
                         )
-                    )
+                    ) { launchSingleTop = true }
                 },
                 onDeleteButtonClick = bookmarkedLocationsViewModel::deleteBookmarks,
                 onBackButtonClick = navController::popBackStack
