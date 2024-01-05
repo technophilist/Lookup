@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -75,7 +76,7 @@ fun BookmarkedLocationsScreen(
         )
         val selectedColor = MaterialTheme.colorScheme.inverseSurface
 
-        LazyColumn {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(items = bookmarkedLocations, key = { it.name }) {
                 val backgroundColor by remember {
                     derivedStateOf { if (isSelectedMap[it] == true) selectedColor else Color.Transparent }
