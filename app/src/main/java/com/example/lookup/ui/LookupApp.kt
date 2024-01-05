@@ -3,9 +3,13 @@ package com.example.lookup.ui
 import android.widget.Toast
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -83,7 +87,11 @@ fun LookupApp(navController: NavHostController = rememberNavController()) {
         composable(route = LookupDestinations.BookmarksScreen.route) {
             val bookmarkedLocationsViewModel = hiltViewModel<BookmarkedLocationsViewModel>()
             val bookmarkedLocationsList by bookmarkedLocationsViewModel.bookmarksListStream.collectAsStateWithLifecycle()
+            // A background color needs to be explicitly set because we might navigating from another
+            // screen, such as the HomeScreen which might have a different background,
+            // causing the navigation animation to look choppy.
             BookmarkedLocationsScreen(
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface),
                 bookmarkedLocations = bookmarkedLocationsList,
                 onBookmarkedLocationClick = {
                     navController.navigate(
