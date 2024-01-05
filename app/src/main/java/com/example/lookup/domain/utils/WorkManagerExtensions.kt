@@ -51,12 +51,13 @@ fun WorkManager.enqueuePrefetchArticleWorkerForLocation(
  * Returns a [Flow] that emits the [WorkInfo] for the prefetch worker associated with the given location.
  *
  * @param nameOfLocation The name of the location for which to retrieve the [WorkInfo].
- * @return A Flow that emits the [WorkInfo] of the associated worker.
+ * @return A Flow that emits the [WorkInfo] of the associated worker. A return value of null indicates
+ * that there is no such active worker for a location with the specified [nameOfLocation].
  */
-fun WorkManager.getPrefetchWorkerInfoForLocationFlow(nameOfLocation: String): Flow<WorkInfo> {
+fun WorkManager.getPrefetchWorkerInfoForLocationFlow(nameOfLocation: String): Flow<WorkInfo?> {
     val uniqueWorkName = getWorkNameForLocation(nameOfLocation)
     return getWorkInfosForUniqueWorkFlow(uniqueWorkName)
-        .map { it.first() }
+        .map { it.firstOrNull() }
 }
 
 /**

@@ -46,11 +46,16 @@ class LandmarkDetailViewModel @Inject constructor(
             }
 
     init {
+        // todo: all locations are intially appearing as already bookmarked
+        //    Edit mode is not working wrll and requires long tap egven if already in edit mode. if not, it navigates to detail screen.gi
         _uiState.update { LandmarkDetailScreenUiState.Loading }
         WorkManager
             .getInstance(getApplication<LookupApplication>().applicationContext)
             .getPrefetchWorkerInfoForLocationFlow(nameOfLandmark)
-            .onEach { if (it.state.isFinished) fetchArticleAndUpdateUiState() }
+            .onEach {workInfo ->
+                val state = workInfo?.state
+                if (state == null || state.isFinished) fetchArticleAndUpdateUiState()
+            }
             .launchIn(viewModelScope)
     }
 
