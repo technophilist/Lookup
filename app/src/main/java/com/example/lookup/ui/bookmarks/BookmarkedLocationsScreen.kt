@@ -93,9 +93,10 @@ fun BookmarkedLocationsScreen(
                     nameOfLocation = it.name,
                     imageUrlOfLocation = it.imageUrl,
                     onClick = {
-                        onBookmarkedLocationClick(it)
                         if (isInSelectionMode) {
                             isSelectedMap[it] = !isSelectedMap.getOrPut(it) { false }
+                        } else {
+                            onBookmarkedLocationClick(it)
                         }
                     },
                     onLongClick = { isSelectedMap[it] = true }
