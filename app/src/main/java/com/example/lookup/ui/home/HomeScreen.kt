@@ -168,7 +168,8 @@ fun HomeScreen(
             title = {
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White // must be white in both light & dark modes
                 )
             },
             actions = { TopBarActionsRow(onBookmarksButtonClick = navigateToBookmarkedLocations) }
