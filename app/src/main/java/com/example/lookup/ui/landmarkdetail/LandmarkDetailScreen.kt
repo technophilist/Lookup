@@ -1,5 +1,6 @@
 package com.example.lookup.ui.landmarkdetail
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -31,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -88,7 +92,13 @@ private fun LoadingScreen(modifier: Modifier = Modifier, onBackButtonClick: () -
                     .statusBarsPadding()
                     .align(Alignment.TopStart),
                 onClick = onBackButtonClick,
-                content = { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null) }
+                content = {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = Color.White // white color in both light and dark mode
+                    )
+                }
             )
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
@@ -112,7 +122,13 @@ private fun ErrorScreen(
                     .statusBarsPadding()
                     .align(Alignment.TopStart),
                 onClick = onBackButtonClick,
-                content = { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null) }
+                content = {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = Color.White // white color in both light and dark mode
+                    )
+                }
             )
             Column(
                 modifier = Modifier
@@ -204,13 +220,15 @@ private fun Header(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.displayMedium
+                style = MaterialTheme.typography.displayMedium,
+                color = Color.White,
             )
             Text(
                 modifier = Modifier.alpha(0.5f),
                 text = subtitle,
                 style = MaterialTheme.typography.titleLarge,
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
+                color = Color.White
             )
         }
         Row(
@@ -222,7 +240,13 @@ private fun Header(
         ) {
             IconButton(
                 onClick = onBackButtonClick,
-                content = { Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null) }
+                content = {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
             )
             ArticleVariationDropDownMenu(
                 modifier = Modifier.padding(end = 16.dp),
@@ -249,16 +273,21 @@ private fun ArticleVariationDropDownMenu(
 ) {
     val bardIcon = ImageVector.vectorResource(id = R.drawable.ic_bard_logo)
     Box(modifier = modifier) {
-        OutlinedButton(onClick = onDropDownIconClick) {
+        OutlinedButton(
+            onClick = onDropDownIconClick,
+            border = BorderStroke(1.dp, Color(0xffBBBEC5))
+        ) {
             Icon(
                 modifier = Modifier.size(24.dp),
                 imageVector = bardIcon,
-                contentDescription = null
+                contentDescription = null,
+                tint = Color.Unspecified
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 text = currentlySelectedVariation.variationType.label,
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
+                color = Color(0xffBBBEC5)
             )
         }
         DropdownMenu(expanded = isVisible, onDismissRequest = onDismissRequest) {
