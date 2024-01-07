@@ -1,7 +1,7 @@
 # Lookup - A fully AI powered Landmarks Recognition App
 ![Banner Image](images/app_banner_image.png)
 <p align = "center">
-<a href="https://www.repostatus.org/#wip"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release    suitable for the public." /></a>
+<a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed." /></a>  
 </p>
 
 Lookup is a fully AI powered Android app that lets you explore the world's wonders in a whole new way! Simply take a photo of a famous monument, and the app will
