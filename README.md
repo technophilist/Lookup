@@ -13,6 +13,7 @@ instantly recognize it and generate fascinating descriptions, answer your questi
 3. [Tech Stack](#tech-stack)
 4. [Remote API's / Client SDK's](#remote-apis--client-sdks)
 5. [Source code, Architecture, & Testing](#source-code-architecture--testing)
+6. [Building and running the app](#building-and-running-the-app)
 
 ## Demo
 https://github.com/technophilist/Lookup/assets/54663474/25ff77dd-4110-4165-b470-c2613e7112eb
@@ -50,3 +51,22 @@ https://github.com/technophilist/Lookup/assets/54663474/25ff77dd-4110-4165-b470-
 - Commit messages follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 - Consists of unit tests that predominantly test the data layer.
 
+## Building and running the app
+1. Create an unsplash developer account and get the api token from https://unsplash.com/documentation.
+2. In the `local.properties` file of your project add the api key as shown below.
+```properties
+UNSPLASH_API_ACCESS_KEY = PASTE-YOUR-TOKEN-HERE
+```
+3. The app can be made to either use [Gemini](https://ai.google.dev) or [Chat-GPT](https://openai.com/blog/introducing-chatgpt-and-whisper-apis)
+for it's contextual text generation features. To use either of the two, make sure to get the access / api key for the chosen LLM service,
+and paste it in the `local.properties` file as follows. For the service that you've chosen not to use,
+make sure to enter a random string as the access key since the existence of both the keys are required
+for the app to build.
+```properties
+UNSPLASH_API_ACCESS_KEY = PASTE-YOUR-TOKEN-HERE
+GOOGLE_GEMINI_API_KEY = PASTE-YOUR-TOKEN-HERE
+```
+5. By default, the app uses Gemini for text generation. If you want to use Chat-GPT, then replace the '@GeminiClient'
+di qualifier with the `@OpenAiClient` qualifier in all places where an instance of `TextGeneratorClient` is
+injected.
+6. Build the app and run it.
