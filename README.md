@@ -13,7 +13,8 @@ instantly recognize it and generate fascinating descriptions, answer your questi
 3. [Tech Stack](#tech-stack)
 4. [Remote API's / Client SDK's](#remote-apis--client-sdks)
 5. [Source code, Architecture, & Testing](#source-code-architecture--testing)
-6. [Building and running the app](#building-and-running-the-app)
+6. [Underlying Model](#underlying-model)
+7. [Building and running the app](#building-and-running-the-app)
 
 ## Demo
 https://github.com/technophilist/Lookup/assets/54663474/25ff77dd-4110-4165-b470-c2613e7112eb
@@ -40,6 +41,9 @@ https://github.com/technophilist/Lookup/assets/54663474/25ff77dd-4110-4165-b470-
 - Moshi + Moshi Kotlin CodeGen for deserializing responses from the API.
 - Uses [Kotlin Gradle DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html).
 
+## Underlying Model
+Under the hood, the app uses the [classifier-north-america-v1 image classifier built by Google](https://www.kaggle.com/models/google/landmarks/frameworks/tensorFlow1/variations/classifier-north-america-v1).
+So, the app will be able to recognize all the famous landmarks in the north america region that the classifier was trained to identify.
 
 ## Remote API's / Client SDK's
 - [Gemini Client SDK](https://ai.google.dev/tutorials/android_quickstart) 
