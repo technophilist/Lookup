@@ -12,9 +12,10 @@ instantly recognize it and generate fascinating descriptions, answer your questi
 2. [Screenshots](#screenshots)
 3. [Tech Stack](#tech-stack)
 4. [Remote API's / Client SDK's](#remote-apis--client-sdks)
-5. [Source code, Architecture, & Testing](#source-code-architecture--testing)
-6. [Underlying Model](#underlying-model)
-7. [Building and running the app](#building-and-running-the-app)
+5. [Nptable Features](#notable-features)
+6. [Source code, Architecture, & Testing](#source-code-architecture--testing)
+7. [Underlying Model](#underlying-model)
+8. [Building and running the app](#building-and-running-the-app)
 
 ## Demo
 https://github.com/technophilist/Lookup/assets/54663474/25ff77dd-4110-4165-b470-c2613e7112eb
@@ -49,6 +50,24 @@ So, the app will be able to recognize all the famous landmarks in the north amer
 - [Gemini Client SDK](https://ai.google.dev/tutorials/android_quickstart) 
 - [OpenAI API](https://openai.com/blog/openai-api)
 - [Unsplash API](https://unsplash.com/developers)
+
+## Notable features
+<dl>
+  <dt>Haptic Feedback 🪄</dt>
+  <dd>The app subtly improves the user-experience by leveraging the on-device vibration actuators to provide a haptic feedback when certain events occur in the app such as clicking the shutter button or displaying the bottom sheet once the app has recognized the landmark.</dd>
+
+  <dt>Dynamic Colors & Light/Dark Themes 🎨</dt>
+  <dd>The app not only supports dynamic colors on devices that support it, but also switches to separate defined light and dark themes (based on whether the device is in dark / light mode) helping it to provide a more cohesive user experience.</dd>
+
+  <dt>Themed App Icons (Android 13+) 🌈</dt>
+  <dd>The app also supports the "Themed Icons" feature available on Android 13 and later. If the user has opted in for the feature on a device that is running Android 13 and higher, the app's icon will be tinted to inherit the coloring of the user’s chosen wallpaper and other themes.</dd>
+
+  <dt>Intelligent Caching 🔮</dt>
+  <dd>The app caches the results of many API calls helping to not only improve the average response time, but also to reduce the number of calls being made to the underlying RESTful services. Moreover, the app also leverages WorkManger to prefetch the different articles associated with a specific bookmarked location before the user even navigates to the detail screen where the article(s) are displayed. This helps in reducing the average Time To Initial Display (TTID) of the associated screen.</dd>
+
+  <dt>Meta Prompting 🤖</dt>
+  <dd>The app uses the technique of meta-prompting to display possible questions (as a suggestion chip) that a user might have about a specific identified location.</dd>
+</dl>
 
 ## Source code, Architecture, & Testing
 - Uses multi-repository pattern.
